@@ -15,3 +15,5 @@
 //= require popper
 //= require bootstrap
 //= require modernizr.min
+//= require summernote/summernote-bs4.min
+//= require summernote-init

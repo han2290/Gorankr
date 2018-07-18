@@ -4,21 +4,22 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="card-box">
+                    
                     <form method="post">
                         <div>
-                            <input type="text" class="p-1 form-control" placeholder="제목"></input>
+                            <input type="text" name="title" class="p-1 form-control" placeholder="제목"></input>
                         </div>
                         <div class="pt-3">
-                            <textarea id="elm1" name="area"></textarea>
+                            <!--elm1-->
+                            <textarea name="content" class="bt-light" data-provider="summernote" ></textarea>
                         </div>
                         <hr>
                         <div class="d-flex justify-content-end ">
                             <button type="submit" class = "btn btn-primary waves-effect waves-light"> 등록 </button>
                             <button type="submit" class = "btn btn-secondary waves-effect waves-light m-l-5"> 취소 </button>
                         </div>
-                        
-                        
                     </form>
+                    
                 </div>
             </div><!-- end col -->
         </div>
@@ -29,6 +30,11 @@
 <% content_for 'javascript_content' do%>
     <%= javascript_include_tag params[:controller]%>
     <script type="text/javascript">
+    
+    
+    
+    
+    
             $(document).ready(function () {
                 if($("#elm1").length > 0){
                     tinymce.init({
