@@ -1,0 +1,26 @@
+<div id="gameaddbox" class="modal-demo card border-primary" style="">
+                <button type="button" class="close" onclick="Custombox.close();">
+                    <span>×</span><span class="sr-only">Close</span>
+                </button>
+                <h4 class="custom-modal-title bg-primary">게임 연동</h4>
+                <div class="custom-modal-text text-left">
+                    <form role="form" method="get">
+                        <div class="form-group">
+                            <label for="game">Game</label>
+                            <select name="gamename" class="form-control">
+                              <option value="lol">롤</option>
+                              <option value="ow">오버워치</option>
+                              <option value="bg">배틀그라운드</option>
+                            </select>
+                        </div>
+                         <div class="form-group">
+                            <label for="name">ID</label>
+                            <input name="gameid" type="text" class="form-control" id="name" placeholder="게임 아이디를 입력하세요">
+                        </div>
+                        <button type="submit" class="btn btn-success waves-effect waves-light">Save</button>
+                        <button type="button" class="btn btn-danger waves-effect waves-light m-l-5" onclick="Custombox.close();">
+                            Cancel
+                        </button>
+                    </form>
+                </div>
+            </div>

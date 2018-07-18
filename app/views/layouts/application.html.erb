@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>TempApp</title>
+    <%= csrf_meta_tags %>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <%= stylesheet_link_tag    'application', media: 'all' %>
+    <%= stylesheet_link_tag    params[:controller], media: 'all' %>
+    <%= javascript_include_tag 'application'%>
+  </head>
+
+  <body>
+    <div id="wrapper">
+      <%= render 'shared/topbar' %>
+      <%= render 'shared/leftsidemenu' %>
+      
+      <div class="content-page">
+        <%= yield %>
+        <!--<footer class="footer text-right">-->
+        <!--    2016 - 2018 © Adminto. Coderthemes.com-->
+        <!--</footer>-->
+      </div>
+      <%= render 'shared/siderightbar' %>
+    </div>
+    
+    <%= yield 'javascript_content' %>
+  </body>
+</html>

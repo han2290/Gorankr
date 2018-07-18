@@ -1,0 +1,48 @@
+
+<!-- Start content -->
+<div class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!---->
+    		<div class="card-box d-flex align-items-start flex-column " style="height: 500px; width: 500px;" >
+    		  <div style="height: 60%;">
+    		    <%= render 'shared/cardlist' %>
+    		  </div>
+    		  <div class="w-100 d-flex flex-column " style="height: 40%;">
+    		    <div class="h-75">
+    		      <h4>Game Title</h4>
+    		      <p >현재 1005165명이 이 게임에서 팀원을 찾는 중입니다.</p>
+    		    </div>
+    		    
+    		    <div class="d-flex h-25 align-items-end justify-content-end">
+    		      
+    		      <a href="/" class="popp badge badge-light align-items-center" 
+    		        data-container="body" data-trigger="hover" data-placement="top" 
+    		        data-content="당신의 멘토를 찾아드립니다." >
+    		        <i class=" mdi mdi-account-convert text-primary"  style="font-size: 20px;"></i>
+    		      </a>
+    		      &nbsp&nbsp
+    		      <a href="/match" class="popp badge badge-light align-items-center"
+    		        data-container="body" data-trigger="hover" data-placement="top" 
+    		        data-content="당신의 팀원을 찾아드립니다." >
+    		        <i class="ti-game text-primary" style="font-size: 20px;"></i>
+    		      </a>
+    		      
+    		    </div>
+    		  </div>
+      </div><!-- end col -->
+      
+    </div>
+  </div> <!-- container -->
+</div> <!-- content -->
+
+
+<!-- Javascript contents -->
+<% content_for 'javascript_content' do %>
+<%= javascript_include_tag params[:controller] %>
+<script>
+$('.popp').popover();
+</script>
+<% end %>
+
+

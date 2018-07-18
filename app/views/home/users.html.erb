@@ -1,0 +1,28 @@
+<br><br><br><br><br><br>
+
+<table border="/" class ="ml-5">
+    <thead>
+        <th>Image</th>
+        <th>Name</th>
+        <th>email</th>
+        <th>image</th>
+    </thead>
+    <tbody>
+        <% @users.each do |user|%>
+        <tr>
+            <td><img src="<%= user.avatar%>" style="height: 50px; width: 50px;"></td>
+            <td><%= user.username %></td>
+            <td><%= user.email %></td>
+            <td><%= user.avatar%></td>
+            <td>
+                <%= form_tag "/users/#{user.id}/image", method: :patch, multipart: true do %> 
+                    <%= file_field_tag  :avatar %>
+                    <%= submit_tag("확인") %>
+                <% end %>
+            </td>
+        </tr>
+        <% end %>
+    </tbody>
+</table>
+
+

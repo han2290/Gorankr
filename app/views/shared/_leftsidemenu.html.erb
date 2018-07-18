@@ -1,0 +1,65 @@
+<div class="left side-menu">
+    <div class="sidebar-inner slimscrollleft">
+        
+        <!-- User -->
+        
+        <div class="user-box">
+        <% if user_signed_in? %>
+            <div class="user-img">
+                <img src="<%= current_user.avatar.thumb %>" alt="user-img" title="Mat Helme" class="rounded-circle img-thumbnail img-responsive">
+                <div class="user-status offline">
+                    <i class="mdi mdi-adjust"></i>
+                </div>
+            </div>
+            <h5><a href="#">Mat Helme</a> </h5>
+            <ul class="list-inline">
+                <li class="list-inline-item">
+                    <a href="/mypage" >
+                        <i class="mdi mdi-settings" style="font-size: 25px;"></i>
+                    </a>
+                </li>
+
+                <li class="list-inline-item">
+                    <a href="/users/sign_out" class="text-custom"  data-method="delete" >
+                        <i class="mdi mdi-power" style="font-size: 25px;"></i>
+                    </a>
+                </li>
+            </ul>
+        <% else %>
+            <a href="/users/sign_in" class="text-custom">
+                <i class="mdi mdi-power" style="font-size: 50px;"></i>
+            </a>
+        <% end %>
+        </div>
+        <!-- End User -->
+
+        <!--- Sidemenu -->
+        <div id="sidebar-menu">
+            <ul>
+            	<li class="text-muted menu-title">Navigation</li>
+
+                <li>
+                    <a href="/" class="waves-effect"><i class="mdi mdi-view-dashboard"></i> <span> Dashboard </span> </a>
+                </li>
+
+                <li class="has_sub">
+                    <a href="javascript:void(0);" class="waves-effect">
+                        <i class="mdi mdi-texture"></i>
+                        <span> 게시판 </span> 
+                    </a>
+                    <ul class="list-unstyled">
+                        <li><a href="form-elements.html">로오오오올</a></li>
+                        <li><a href="form-advanced.html">우오버어어워치</a></li>
+                        <li><a href="form-validation.html">영원히 잡히지 않는 큐</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="clearfix"></div>
+        </div>
+        <!-- Sidebar -->
+        <div class="clearfix"></div>
+
+    </div>
+
+</div>
+            

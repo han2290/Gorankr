@@ -1,0 +1,119 @@
+
+<!-- Start content -->
+<div class="content">
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-4 col-md-6"> 
+            <div class="card-box d-flex justify-content-start">
+                <div class="d-flex align-items-center flex-column ">
+                    <img src="<%= current_user.avatar%>" style="width: 128px; height: 128px;">
+                    <button href="#editprofile" class="form-control btn" 
+                            data-animation="fadein" data-plugin="custommodal" data-overlayspeed="200" 
+                            data-overlaycolor="#36404a">
+                         프로필 수정 
+                     </button>
+                </div>
+                    
+                <div class="pl-4 flex-column">
+                    <h5 class="mt-0 mb-1">User Name</h5>
+                    <p ><%= current_user.username %></p>
+                    
+                    <h5 class="mb-1">Email</h5>
+                    <p><%= current_user.email %></p>
+                    
+                    <h5 class="mb-1">Index</h5>
+                    <p>Index</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-4 col-md-6">
+            <div class="card-box taskboard-box">
+                <ul class="list-unstyled task-list">
+                    <li class="mb-2">
+                        <div class="kanban-box">
+                            <div class="kanban-detail ml-2 p-1">
+                                <a href="#" class="badge badge-light text-primary pull-right">X</a>
+                                <h4 class="mb-1">로오오옹ㄹ</h4>
+                                <div class="d-flex align-items-cente">
+                                    <img class="thumb-sm rounded-circle"  src="<%= asset_path 'users/avatar-1.jpg' %>" >
+                                    <a href="" data-toggle="tooltip" data-placement="top" title="" 
+                                    data-original-title="상세보기" class="ml-2">
+                                        <i class="mdi mdi-format-align-left text-light" style="font-size: 20px"></i>
+                                    </a>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </li>
+                    <li class="mb-2">
+                        <div class="kanban-box">
+                            <div class="kanban-detail ml-2 p-1">
+                                <a href="#" class="badge badge-light text-primary  pull-right">X</a>
+                                <h4 class="mb-1">오버워치</h4>
+                                <div class="d-flex align-items-cente">
+                                    <img class="thumb-sm rounded-circle"  src="<%= asset_path 'users/avatar-1.jpg' %>" >
+                                    <a href="" data-toggle="tooltip" data-placement="top" title="" 
+                                    data-original-title="상세보기" class="ml-2">
+                                        <i class="mdi mdi-format-align-left text-light" style="font-size: 20px"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="mb-2">
+                        <div class="kanban-box">
+                            <div class="kanban-detail ml-2 p-1">
+                                <a href="#" class="badge badge-light text-primary  pull-right">X</a>
+                                <h4 class="mb-1">배애앵그</h4>
+                                <div class="d-flex align-items-cente">
+                                    <img class="thumb-sm rounded-circle"  src="<%= asset_path 'users/avatar-1.jpg' %>" >
+                                    <a href="#gameviewbox" class="ml-2"
+                                    data-animation="fadein" data-plugin="custommodal" data-overlayspeed="200" 
+                                    data-overlaycolor="#36404a">
+                                        <i class="mdi mdi-format-align-left text-light" style="font-size: 20px"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="">
+                        <button href="#gameaddbox" class="btn btn-primary form-control"
+                        data-animation="fadein" data-plugin="custommodal" data-overlayspeed="200" 
+                        data-overlaycolor="#36404a">
+                            추가
+                        </button>
+                    </li>
+                </ul>
+            </div>  
+        </div>
+        
+        
+
+    </div>
+  </div> <!-- container -->
+</div> <!-- content -->
+
+<%=render 'gameaddbox' %>
+<%=render 'gameviewbox' %>
+<%=render 'editprofile' %>
+
+<!-- Javascript contents -->
+<% content_for 'javascript_content' do %>
+<%= javascript_include_tag params[:controller] %>
+<script>
+$('.popp').popover();
+$('.dropify').dropify({
+    messages: {
+        'default': 'Drag and drop a file here or click',
+        'replace': 'Drag and drop or click to replace',
+        'remove': 'Remove',
+        'error': 'Ooops, something wrong appended.'
+    },
+    error: {
+        'fileSize': 'The file size is too big (1M max).'
+    }
+});
+// $('input.dropify')[0].value="<#%= current_user.avatar %>"
+</script>
+<% end %>

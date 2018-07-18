@@ -1,0 +1,41 @@
+<br><br><br><br>
+<div class="text-center">
+    <a href="index.html" class="logo"><span>Admin<span>to</span></span></a>
+    <h5 class="text-muted m-t-0 font-600">Responsive Admin Dashboard</h5>
+</div>
+<div class="m-t-40 card-box">
+  <div class="text-center">
+      <h4 class="text-uppercase font-bold m-b-0">SiGN IN</h4>
+  </div>
+  <div class="p-20">
+    <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: {class: "form-horizontal m-t-20"}) do |f| %>
+      <div class="form-group">
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control",
+        placeholder: "email" %>
+      </div>
+    
+      <div class="form-group">
+        <%= f.password_field :password, autocomplete: "off", class: "form-control",
+        placeholder: "password" %>
+      </div>
+    
+      <% if devise_mapping.rememberable? -%>
+        <div class="form-group">
+          <%= f.check_box :remember_me %>
+          <%= f.label :remember_me %>
+        </div>
+      <% end -%>
+    
+      <div class="actions">
+        <%= f.submit "Log in", class: "btn btn-primary btn-bordred btn-block waves-effect waves-light" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+<!-- end card-box-->
+
+<div class="row">
+    <div class="col-sm-12 text-center">
+        <p class="text-muted">Already have account? <a href="page-register.html" class="text-primary m-l-5"><b><%= render "devise/shared/links" %></b></a></p>
+    </div>
+</div>
