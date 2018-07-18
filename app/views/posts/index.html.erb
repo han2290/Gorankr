@@ -26,27 +26,28 @@
         <div class="col-lg-12">
             <div class="card-box">
               <ul class="list-unstyled">
-                <li>
-                  <div class= "d-flex ">
-                      <div class= "p-0 w-15">
-                        <img class="pr-1" src = "https://www.bloter.net/wp-content/uploads/2017/06/%EA%B5%AC%EA%B8%80-765x430.png"
-                         style="height: 60px; width: 90px;">
-                      </div>
-                      <div class= "flex-grow-1 flex-wrap ">
-                        <div class = "p-0 flex-fill " >
-                          <h5 class = "m-0"><strong>글 제목은 제한 없이 일단 길게 써본다.</strong></h5>
+                <% @posts.each do |post|%>
+                  <li>
+                    <div class= "d-flex ">
+                        <div class= "p-0 w-15">
+                          <img class="pr-1" src = "https://www.bloter.net/wp-content/uploads/2017/06/%EA%B5%AC%EA%B8%80-765x430.png"
+                           style="height: 60px; width: 90px;">
                         </div>
-                        <div class= "p-0 " >
-                          <small >카테고리</small>
+                        <div class= "flex-grow-1 flex-wrap ">
+                          <div class = "p-0 flex-fill " >
+                            <h5 class = "m-0"><strong><%= post.title%></strong></h5>
+                          </div>
+                          <div class= "p-0 " >
+                            <small ><%= post.category.game_name%></small>
+                          </div>
+                          <div class= "p-0 " >
+                            <small><%= post.created_at %>/<%=post.username %>/<%=post.likes.size%></small>
+                          </div>
                         </div>
-                        <div class= "p-0 " >
-                          <small>글 작성 날짜/작성자/추천 수</small>
-                        </div>
-                      </div>
-                  </div>
-                  <hr>
-                </li>
-                
+                    </div>
+                    <hr>
+                  </li>
+                <% end %>
                 <li>
                   <div class= "d-flex ">
                       <div class= "p-0 w-15">

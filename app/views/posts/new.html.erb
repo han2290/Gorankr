@@ -4,21 +4,34 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="card-box">
+                    <%= form_for(@post) do |f| %>
+                      <div class="field">
+                        <%= f.text_field :title, class: "p-1 form-control", placeholder: "제목" %>
+                      </div>
+                      <div class="pt-3">
+                        <%= f.text_area :content, class: "bt-light", 'data-provider': :summernote %>
+                      </div>
+                      <hr>
+                      <div class="d-flex justify-content-end">
+                        <%= f.button "등록", type: "submit", class: "btn btn-primary waves-effect waves-light" %>
+                        <%= f.button "취소", type: "submit", class: "btn btn-secondary waves-effect waves-light m-l-5" %>
+                      </div>
+                    <% end %>
                     
-                    <form method="post">
-                        <div>
-                            <input type="text" name="title" class="p-1 form-control" placeholder="제목"></input>
-                        </div>
-                        <div class="pt-3">
+                    <!--<form method="post">-->
+                    <!--    <div>-->
+                    <!--        <input type="text" name="title" class="p-1 form-control" placeholder="제목"></input>-->
+                    <!--    </div>-->
+                    <!--    <div class="pt-3">-->
                             <!--elm1-->
-                            <textarea name="content" class="bt-light" data-provider="summernote" ></textarea>
-                        </div>
-                        <hr>
-                        <div class="d-flex justify-content-end ">
-                            <button type="submit" class = "btn btn-primary waves-effect waves-light"> 등록 </button>
-                            <button type="submit" class = "btn btn-secondary waves-effect waves-light m-l-5"> 취소 </button>
-                        </div>
-                    </form>
+                    <!--        <textarea name="content" class="bt-light" data-provider="summernote" ></textarea>-->
+                    <!--    </div>-->
+                    <!--    <hr>-->
+                    <!--    <div class="d-flex justify-content-end ">-->
+                    <!--        <button type="submit" class = "btn btn-primary waves-effect waves-light"> 등록 </button>-->
+                    <!--        <button type="submit" class = "btn btn-secondary waves-effect waves-light m-l-5"> 취소 </button>-->
+                    <!--    </div>-->
+                    <!--</form>-->
                     
                 </div>
             </div><!-- end col -->

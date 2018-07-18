@@ -1,12 +1,10 @@
 <div class="left side-menu">
     <div class="sidebar-inner slimscrollleft">
-        
         <!-- User -->
-        
         <div class="user-box">
         <% if user_signed_in? %>
             <div class="user-img">
-                <img src="<%= current_user.avatar.thumb %>" alt="user-img" title="Mat Helme" class="rounded-circle img-thumbnail img-responsive">
+                <img src="<%= current_user.avatar %>" alt="user-img" title="Mat Helme" class="rounded-circle img-thumbnail img-responsive">
                 <div class="user-status offline">
                     <i class="mdi mdi-adjust"></i>
                 </div>
