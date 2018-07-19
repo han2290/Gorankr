@@ -24,6 +24,13 @@ Rails.application.routes.draw do
   patch '/boards/:game_name/:id'  => 'posts#update', as: 'post_update'
   delete '/boards/:game_name/:id' => 'posts#destroy'
   
+  
+  # Routing for board comments
+  post '/posts/:id/comments' => 'posts#create_comment'
+  delete '/posts/comments/:comment_id' => 'posts#destroy_comment'
+  patch '/posts/comments/:comment_id' => 'posts#update_comment'
+  
+  
   # test
   get '/users'                    =>  'home#users'
   

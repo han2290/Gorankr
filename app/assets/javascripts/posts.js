@@ -16,5 +16,8 @@
 //Create
 //= require tinymce.min
 
+//comment
+//= require custombox.min
+
 //= require jquery.core
 //= require jquery.app

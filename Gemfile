@@ -49,6 +49,15 @@ gem 'carrierwave'
 # Image resizer Minimagik
 gem "mini_magick"
 
+# nokogiri
+gem "nokogiri"
+
+# json to read json
+gem "json"
+
+# rest client for api
+gem "rest-client"
+
 group :development, :test do
   gem 'rails_db'
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

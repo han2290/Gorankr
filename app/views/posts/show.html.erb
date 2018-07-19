@@ -10,34 +10,36 @@
                                 <!--왼쪽-->
                                 <div class="d-flex flex-column">
                                     <div class="d-flex justify-content-between">
-                                        <h4 class="m-0 p-0">킹갓제너럴충무공엠페러마제스티우주존잘남이다.</h4>
+                                        <h4 class="m-0 p-0"><%=@post.title%></h4>
+                                        <% if current_user.id == @post.user_id %>
                                         <div class="dropdown pull-right">
                                             <a href="#" class="dropdown-toggle arrow-none card-drop" data-toggle="dropdown" aria-expanded="false">
                                                 <i class="mdi mdi-dots-vertical"></i>
                                             </a>
                                             <div class="dropdown-menu dropdown-menu-right">
                                                 <!-- item-->
-                                                <a href="javascript:void(0);" class="dropdown-item">Edit</a>
+                                                <a href="/boards/<%= @post.id %>/edit" class="dropdown-item">Edit</a>
                                                 <!-- item-->
-                                                <a href="javascript:void(0);" class="dropdown-item">Delete</a>
+                                                <a href="./<%= @post.id %>" class="dropdown-item" data-method="delete">Delete</a>
                                             </div>
                                         </div>
+                                        <% end %>
                                     </div>
                                     
                                     
                                     <div class="d-flex justify-content-between">
                                         <div class="pt-1 comment " style="width: 50%;">
-                                            <img src="<%= asset_path 'users/avatar-7.jpg' %>" alt="" class="m-1 comment-avatar">
+                                            <img src="<%=@user.avatar.thumb%>" alt="" class="m-1 comment-avatar">
                                             <div class="ml-1 ">
-                                                <p class="text-muted "><i>모두가아는남자신의민</i></p>
+                                                <p class="text-muted "><i><%=@post.username%></i></p>
                                             </div>
                                         </div>
                                         <div class= "d-flex align-items-end flex-column" style="width: 50%;">
-                                            <small class="pt-2">2088.01.15</small>
+                                            <small class="pt-2"><%= @post.created_at.strftime("%Y-%m-%d")%></small>
                                             <small class="p-0">
                                                     조회수 <strong>500</strong>
                                                     추천수 <strong>500</strong>
-                                                </small>
+                                            </small>
                                         </div>
                                         </div>
                                     
@@ -47,7 +49,7 @@
                             
                             <!--내용 영역-->
                             <div>
-                                <p> 임마! 어?! 내가 누군지 알어! 어?! 내가! 마! 니 서장이랑! 어! 밥도 묵고! 술도 묵고! 다했어! 마! </p>
+                                <%= simple_format(@post.content) %>
                             <br><br><br><br><br><br><br><br><br>
                             </div>
                             
@@ -68,58 +70,50 @@
                 <!--/ meta -->
 
 
-
-                <form method="post" class="card-box">
+                <!--comment create-->
+                <%= form_tag "/posts/#{@post.id}/comments", method: :post, class: "card-box"  do %>
+                <!--<form action="/posts/<%#=@post.id%>/comments" method="post" class="card-box">-->
                     <span class="input-icon icon-right">
-                        <textarea rows="2" class="form-control" placeholder="Post a new message"></textarea>
+                        <textarea name="content" rows="2" class="form-control" placeholder="Post a new message"></textarea>
                     </span>
                     <div class="p-t-10 pull-right">
-                        <a class="btn btn-sm btn-primary waves-effect waves-light">Send</a>
+                        <button type="submit" class="btn btn-sm btn-primary waves-effect waves-light">Send</button>
                     </div>
                     <br><br>
-                </form>
+                <!--</form>-->
+                <% end %>
                 
                 <!--comment list-->
                 <div class="card-box">
                     <!--comment01-->
+                    <% @post.comments.reverse.each do |comment| %>
                     <div class="comment">
-                        <img src="<%= asset_path 'users/avatar-1.jpg' %>" alt="" class="comment-avatar">
+                        <img src="<%= comment.user.avatar.thumb %>" alt="" class="comment-avatar">
                         <div class="comment-body">
                             <div class="comment-text">
                                 <div class="comment-header">
-                                    <a href="#" title="">Adam Jansen</a><span>about 2 minuts ago</span>
+                                    <a href="#" title=""><%= comment.user.username %></a><span><%= comment.user.created_at.strftime("%Y-%m-%d %H:%M") %></span>
                                 </div>
-                                Story based around the idea of time lapse, animation to post soon!
+                                <%= comment.content %>
+                            </div>
+                            <div class="d-flex justify-content-start">
+                                <% if current_user.id == comment.user_id %>
+                                    <a href="#editcomment" class="pl-1 text-muted comment-href" data-id="<%= comment.id %>"
+                                    data-animation="fadein" data-plugin="custommodal" data-overlayspeed="200" 
+                                    data-overlaycolor="#36404a" data-comment="<%= comment.content %>"
+                                    style="font-size: 12px">
+                                        Edit
+                                    </a>
+                                    
+                                    <a href="/posts/comments/<%=comment.id%>" data-method="delete"
+                                    class="text-muted  pl-2" style="font-size: 12px">
+                                        Delete
+                                    </a>
+                                <% end %>
                             </div>
                         </div>
                     </div>
-                    
-                    <!--comment02-->
-                    <div class="comment">
-                        <img src="<%= asset_path 'users/avatar-1.jpg' %>" alt="" class="comment-avatar">
-                        <div class="comment-body">
-                            <div class="comment-text">
-                                <div class="comment-header">
-                                    <a href="#" title="">Kim Ryder</a><span>about 4 hours ago</span>
-                                </div>
-                                i'm in the middle of a timelapse animation myself! (Very different
-                                though.) Awesome stuff.
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!--comment02-->
-                    <div class="comment">
-                        <img src="<%= asset_path 'users/avatar-7.jpg' %>" alt="" class="comment-avatar m-0">
-                        <div class="comment-body">
-                            <div class="comment-text">
-                                <div class="comment-header">
-                                    <a href="#" title="">Nicolai Larson</a><span>10 hours ago</span>
-                                </div>
-                                the parallax is a little odd but O.o that house build is awesome!!
-                            </div>
-                        </div>
-                    </div>
+                    <% end %>
 
                     <div class="m-t-30 text-center">
                         <a href="" class="btn btn-default waves-effect waves-light btn-sm">Load More...</a>
@@ -251,10 +245,16 @@
         </div>
     </div> <!-- container -->
 </div> <!-- content -->
+<%= render 'editcomment' %>
                 
 <% content_for 'javascript_content' do %>
     <%= javascript_include_tag params[:controller] %>
     <script>
-    console.log('script');
+        $('.comment-href').on('click', function(){
+            console.log(`/posts/${$(this).attr('data-id')}/edit`)
+            $('.form-comment')[0].action=`/posts/comments/${$(this).attr('data-id')}`
+            $('.comment-form-text')[0].value = $(this).attr('data-comment')
+        })
+    
     </script>
 <% end %>

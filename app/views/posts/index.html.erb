@@ -29,67 +29,35 @@
                 <% @posts.each do |post|%>
                   <li>
                     <div class= "d-flex ">
-                        <div class= "p-0 w-15">
-                          <img class="pr-1" src = "https://www.bloter.net/wp-content/uploads/2017/06/%EA%B5%AC%EA%B8%80-765x430.png"
-                           style="height: 60px; width: 90px;">
+                      <% 
+                      img = Nokogiri::HTML(post.content).xpath('//img')
+                      if img[0].nil?
+                        src = ""
+                      else
+                        src = img.xpath('//img').first.attr('src')
+                      end 
+                      %>
+                      <div class= "p-0 w-15">
+                        <img class="pr-1" src = "<%=src%>"
+                         style="height: 60px; width: 90px;">
+                      </div>
+                      <div class= "flex-grow-1 flex-wrap ">
+                        <div class = "p-0 flex-fill " >
+                          <h5 class = "m-0"><a class="text-light" href="/boards/<%=@game_name%>/<%= post.id %>"><strong><%= post.title %></strong></a></h5>
                         </div>
-                        <div class= "flex-grow-1 flex-wrap ">
-                          <div class = "p-0 flex-fill " >
-                            <h5 class = "m-0"><strong><%= post.title%></strong></h5>
-                          </div>
-                          <div class= "p-0 " >
-                            <small ><%= post.category.game_name%></small>
-                          </div>
-                          <div class= "p-0 " >
-                            <small><%= post.created_at %>/<%=post.username %>/<%=post.likes.size%></small>
-                          </div>
+                        <div class= "p-0 " >
+                          <small ><%= post.category.game_name%></small>
                         </div>
+                        <div class= "p-0 " >
+                          <small><%= post.created_at %>/<%=post.username %>/<%=post.likes.size%></small>
+                        </div>
+                      </div>
                     </div>
                     <hr>
                   </li>
                 <% end %>
-                <li>
-                  <div class= "d-flex ">
-                      <div class= "p-0 w-15">
-                        <img class="pr-1" src = "http://static.inven.co.kr/column/2014/05/21/news/i1568305431.jpg"
-                         style="height: 60px; width: 90px;">
-                      </div>
-                      <div class= "flex-grow-1 flex-wrap ">
-                        <div class = "p-0 flex-fill " >
-                          <h5 class = "m-0"><strong>뿌애애애애애애애애애앵.</strong></h5>
-                        </div>
-                        <div class= "p-0 " >
-                          <small >카테고리</small>
-                        </div>
-                        <div class= "p-0 " >
-                          <small>글 작성 날짜/작성자/추천 수</small>
-                        </div>
-                      </div>
-                  </div>
-                  <hr>
-                </li>
-                
-                <li>
-                  <div class= "d-flex ">
-                      <div class= "p-0 w-15">
-                        <img class="pr-1" src = "https://cdn.namuwikiusercontent.com/s/ec96b7afb1f5fa0e3dc6144472683c6b2cfc72c91a5bcdfee98d2ae6e8d6ad189a4ad9f111b3a4e1d117bfa841499c7a661729bd8094ed91a39e27ec044a03c76e1c32eb5ba2e06847b1a652c980c5cd?e=1532360774&k=hZL8f0PM36GyAL_0k3Z-Jw"
-                         style="height: 60px; width: 90px;">
-                      </div>
-                      <div class= "flex-grow-1 flex-wrap ">
-                        <div class = "p-0 flex-fill " >
-                          <h5 class = "m-0"><strong>니아ㅓ린야러잳 ㅑ</strong></h5>
-                        </div>
-                        <div class= "p-0 " >
-                          <small >카테고리</small>
-                        </div>
-                        <div class= "p-0 " >
-                          <small>글 작성 날짜/작성자/추천 수</small>
-                        </div>
-                      </div>
-                  </div>
-                  <hr>
-                </li>
               </ul>
+              <a class="text-light" href="/boards/<%=@game_name%>/new"> 글쓰기</a>
             </div> <!-- end card-box -->
         </div>
         <!-- end col -->

@@ -4,12 +4,12 @@
         <div class="user-box">
         <% if user_signed_in? %>
             <div class="user-img">
-                <img src="<%= current_user.avatar %>" alt="user-img" title="Mat Helme" class="rounded-circle img-thumbnail img-responsive">
+                <img src="<%= current_user.avatar.thumb %>" alt="user-img" title="Mat Helme" class="rounded-circle img-thumbnail img-responsive">
                 <div class="user-status offline">
                     <i class="mdi mdi-adjust"></i>
                 </div>
             </div>
-            <h5><a href="#">Mat Helme</a> </h5>
+            <h5><a href="#"><%= current_user.username%></a> </h5>
             <ul class="list-inline">
                 <li class="list-inline-item">
                     <a href="/mypage" >
@@ -46,9 +46,9 @@
                         <span> 게시판 </span> 
                     </a>
                     <ul class="list-unstyled">
-                        <li><a href="form-elements.html">로오오오올</a></li>
-                        <li><a href="form-advanced.html">우오버어어워치</a></li>
-                        <li><a href="form-validation.html">영원히 잡히지 않는 큐</a></li>
+                        <li><a href="/boards/lol">롤</a></li>
+                        <li><a href="/boards/ow">오버워치</a></li>
+                        <li><a href="/boards/bg">배틀그라운드</a></li>
                     </ul>
                 </li>
             </ul>

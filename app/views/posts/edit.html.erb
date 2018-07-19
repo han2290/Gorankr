@@ -1,6 +1,55 @@
-<h1>Editing Board</h1>
+<div class="content">
+    <div class="container-fluid">
+    <br><br><br><br>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card-box">
+                    <%= form_for(@post) do |f| %>
+                      <div class="field">
+                        <%= f.text_field :title, class: "p-1 form-control", placeholder: "제목" %>
+                      </div>
+                      <div class="pt-3">
+                        <%= f.text_area :content, class: "bt-light", 'data-provider': :summernote %>
+                      </div>
+                      <hr>
+                      <div class="d-flex justify-content-end">
+                        <%= f.button "등록", type: "submit", class: "btn btn-primary waves-effect waves-light" %>
+                        <%= f.button "취소", type: "submit", class: "btn btn-secondary waves-effect waves-light m-l-5" %>
+                      </div>
+                    <% end %>
+                </div>
+            </div><!-- end col -->
+        </div>
+        <!-- End row -->
+    </div> <!-- container -->
+</div>
 
-<%= render 'form', board: @board %>
-
-<%= link_to 'Show', @board %> |
-<%= link_to 'Back', boards_path %>
+<% content_for 'javascript_content' do%>
+    <%= javascript_include_tag params[:controller]%>
+    <script type="text/javascript">
+            $(document).ready(function () {
+                if($("#elm1").length > 0){
+                    tinymce.init({
+                        selector: "textarea#elm1",
+                        theme: "modern",
+                        height:300,
+                        plugins: [
+                            "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
+                            "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
+                            "save table contextmenu directionality emoticons template paste textcolor"
+                        ],
+                        toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | l      ink image | print preview media fullpage | forecolor backcolor emoticons",
+                        style_formats: [
+                            {title: 'Bold text', inline: 'b'},
+                            {title: 'Red text', inline: 'span', styles: {color: '#ff0000'}},
+                            {title: 'Red header', block: 'h1', styles: {color: '#ff0000'}},
+                            {title: 'Example 1', inline: 'span', classes: 'example1'},
+                            {title: 'Example 2', inline: 'span', classes: 'example2'},
+                            {title: 'Table styles'},
+                            {title: 'Table row 1', selector: 'tr', classes: 'tablerow1'}
+                        ]
+                    });
+                }
+            });
+        </script>
+<% end %>
