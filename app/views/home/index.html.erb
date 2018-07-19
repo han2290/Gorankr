@@ -42,6 +42,9 @@
 <%= javascript_include_tag params[:controller] %>
 <script>
 $('.popp').popover();
+$('#carouselExampleIndicators').on('slide.bs.carousel', function () {
+  console.log("slider!")
+})
 </script>
 <% end %>
 

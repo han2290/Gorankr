@@ -48,7 +48,7 @@
                             <hr>
                             
                             <!--내용 영역-->
-                            <div>
+                            <div class="mb-1">
                                 <%= simple_format(@post.content) %>
                             <br><br><br><br><br><br><br><br><br>
                             </div>
@@ -98,6 +98,7 @@
                             </div>
                             <div class="d-flex justify-content-start">
                                 <% if current_user.id == comment.user_id %>
+                                
                                     <a href="#editcomment" class="pl-1 text-muted comment-href" data-id="<%= comment.id %>"
                                     data-animation="fadein" data-plugin="custommodal" data-overlayspeed="200" 
                                     data-overlaycolor="#36404a" data-comment="<%= comment.content %>"
@@ -109,6 +110,7 @@
                                     class="text-muted  pl-2" style="font-size: 12px">
                                         Delete
                                     </a>
+                                
                                 <% end %>
                             </div>
                         </div>

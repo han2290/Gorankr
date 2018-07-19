@@ -21,8 +21,8 @@
                     <h5 class="mb-1">Email</h5>
                     <p><%= current_user.email %></p>
                     
-                    <h5 class="mb-1">Index</h5>
-                    <p>Index</p>
+                    <h5 class="mb-1">Age</h5>
+                    <p><%= current_user.age%></p>
                 </div>
             </div>
         </div>
@@ -30,15 +30,16 @@
         <div class="col-xl-4 col-md-6">
             <div class="card-box taskboard-box">
                 <ul class="list-unstyled task-list">
+                    <% current_user.usersgames.each do |game|%>
                     <li class="mb-2">
                         <div class="kanban-box">
                             <div class="kanban-detail ml-2 p-1">
-                                <a href="#" class="badge badge-light text-primary pull-right">X</a>
-                                <h4 class="mb-1">로오오옹ㄹ</h4>
+                                <a href="/mypage/game/<%=game.id%>" data-method="delete" class="badge badge-light text-primary pull-right">X</a>
+                                <h4 class="mb-1"><%=game.category.game_full_name%></h4>
                                 <div class="d-flex align-items-cente">
-                                    <img class="thumb-sm rounded-circle"  src="<%= asset_path 'users/avatar-1.jpg' %>" >
-                                    <a href="" data-toggle="tooltip" data-placement="top" title="" 
-                                    data-original-title="상세보기" class="ml-2">
+                                    <img class="thumb-sm rounded-circle"  src="<%= current_user.avatar.thumb %>" >
+                                    <a href="#gameviewbox" data-game="<%=game.category.game_name%>" data-animation="fadein" data-plugin="custommodal" data-overlayspeed="200" 
+                                    data-overlaycolor="#36404a" class="ml-2 gameinfobtn">
                                         <i class="mdi mdi-format-align-left text-light" style="font-size: 20px"></i>
                                     </a>
                                 </div>
@@ -46,37 +47,7 @@
                             </div>
                         </div>
                     </li>
-                    <li class="mb-2">
-                        <div class="kanban-box">
-                            <div class="kanban-detail ml-2 p-1">
-                                <a href="#" class="badge badge-light text-primary  pull-right">X</a>
-                                <h4 class="mb-1">오버워치</h4>
-                                <div class="d-flex align-items-cente">
-                                    <img class="thumb-sm rounded-circle"  src="<%= asset_path 'users/avatar-1.jpg' %>" >
-                                    <a href="" data-toggle="tooltip" data-placement="top" title="" 
-                                    data-original-title="상세보기" class="ml-2">
-                                        <i class="mdi mdi-format-align-left text-light" style="font-size: 20px"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="mb-2">
-                        <div class="kanban-box">
-                            <div class="kanban-detail ml-2 p-1">
-                                <a href="#" class="badge badge-light text-primary  pull-right">X</a>
-                                <h4 class="mb-1">배애앵그</h4>
-                                <div class="d-flex align-items-cente">
-                                    <img class="thumb-sm rounded-circle"  src="<%= asset_path 'users/avatar-1.jpg' %>" >
-                                    <a href="#gameviewbox" class="ml-2"
-                                    data-animation="fadein" data-plugin="custommodal" data-overlayspeed="200" 
-                                    data-overlaycolor="#36404a">
-                                        <i class="mdi mdi-format-align-left text-light" style="font-size: 20px"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
+                    <% end %>
                     <li class="">
                         <button href="#gameaddbox" class="btn btn-primary form-control"
                         data-animation="fadein" data-plugin="custommodal" data-overlayspeed="200" 
@@ -114,6 +85,18 @@ $('.dropify').dropify({
         'fileSize': 'The file size is too big (1M max).'
     }
 });
-// $('input.dropify')[0].value="<#%= current_user.avatar %>"
+$('.gameinfobtn').on('click', function(){
+   $.ajax({
+            url: "/fetch/" + $(this).attr('data-game'),
+            method: "get",
+            data: {}
+        });
+});
+
+function Clearbox(){
+    $('.gameinfoarea').html(``)    
+}
+
+
 </script>
 <% end %>

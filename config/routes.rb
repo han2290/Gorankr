@@ -7,6 +7,9 @@ Rails.application.routes.draw do
   get '/mypage'                   =>  'mypages#index'
   patch '/mypage/editprofile'     =>  'mypages#editprofile'
   
+  post 'mypage/game'                =>  'mypages#add_game'
+  delete 'mypage/game/:usersgameid' =>  'mypages#destroy_game'
+  
   # match
   get '/match'                    =>  'matchs#index'
   
@@ -29,6 +32,9 @@ Rails.application.routes.draw do
   post '/posts/:id/comments' => 'posts#create_comment'
   delete '/posts/comments/:comment_id' => 'posts#destroy_comment'
   patch '/posts/comments/:comment_id' => 'posts#update_comment'
+  
+  # 데이터 가져오기
+  get '/fetch/:category' => 'mypages#fetch_data'
   
   
   # test

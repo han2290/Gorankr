@@ -10,12 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180718074538) do
+ActiveRecord::Schema.define(version: 20180719064318) do
 
   create_table "categories", force: :cascade do |t|
     t.string   "game_name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string   "game_full_name"
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
   end
 
   create_table "comments", force: :cascade do |t|
@@ -39,6 +40,17 @@ ActiveRecord::Schema.define(version: 20180718074538) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "players", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "category_id"
+    t.integer  "age"
+    t.text     "game_data"
+    t.boolean  "online"
+    t.string   "game_type"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
   create_table "posts", force: :cascade do |t|
     t.string   "title"
     t.string   "username"
@@ -60,6 +72,7 @@ ActiveRecord::Schema.define(version: 20180718074538) do
     t.string   "encrypted_password",     default: "", null: false
     t.string   "avatar",                 default: "", null: false
     t.string   "username"
+    t.integer  "age",                                 null: false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
@@ -72,6 +85,14 @@ ActiveRecord::Schema.define(version: 20180718074538) do
     t.datetime "updated_at",                          null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  end
+
+  create_table "usersgames", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "category_id"
+    t.string   "user_nickname"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
   end
 
 end

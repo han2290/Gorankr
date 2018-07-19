@@ -14,3 +14,9 @@
 <% end %>
 
 <%= render "devise/shared/links" %>
+
+<% content_for 'javascript_content' do %>
+<%= javascript_include_tag params[:controller] %>
+<script>
+</script>
+<% end %>

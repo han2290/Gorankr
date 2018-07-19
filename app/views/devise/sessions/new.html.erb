@@ -39,3 +39,10 @@
         <p class="text-muted">Already have account? <a href="page-register.html" class="text-primary m-l-5"><b><%= render "devise/shared/links" %></b></a></p>
     </div>
 </div>
+
+
+<% content_for 'javascript_content' do %>
+<%= javascript_include_tag params[:controller] %>
+<script>
+</script>
+<% end %>

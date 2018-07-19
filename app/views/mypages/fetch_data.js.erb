@@ -1,0 +1,12 @@
+console.log("fetch_data");
+$('.gameinfoarea').html(`
+    <% @game_data.each do |k, v|%>
+    <h4><%= k %></h4>
+        <% v = v.length==0 ? "데이터가 없습니다." : v%>
+        <p><%= v %></p>
+    <hr>
+    <% end %>
+`)
+
+
+
