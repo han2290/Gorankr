@@ -56,7 +56,7 @@ class MypagesController < ApplicationController
         accountId = user_lol_info["accountId"]
         
         # AccountId를 이용해 솔랭 게임의 정보를 가져온다
-        url = URI.encode("https://kr.api.riotgames.com/lol/match/v3/matchlists/by-account/#{@accountId}?queue=420&api_key=#{ENV["LOL_API_KEY"]}")
+        url = URI.encode("https://kr.api.riotgames.com/lol/match/v3/matchlists/by-account/#{accountId}?queue=420&api_key=#{ENV["LOL_API_KEY"]}")
         user_lol_matches = RestClient.get(url)
         user_lol_matches = JSON.parse(user_lol_matches)
         user_lanes = []
@@ -69,7 +69,7 @@ class MypagesController < ApplicationController
         pos2 = user_lanes[1][0]
         
         # SummonerId를 이용해 티어를 가져온다
-        url = URI.encode("https://kr.api.riotgames.com/lol/league/v3/positions/by-summoner/#{@summonerId}?api_key=#{ENV["LOL_API_KEY"]}")
+        url = URI.encode("https://kr.api.riotgames.com/lol/league/v3/positions/by-summoner/#{summonerId}?api_key=#{ENV["LOL_API_KEY"]}")
         user_lol_league = RestClient.get(url)
         user_lol_league = JSON.parse(user_lol_league)
         tier = user_lol_league[0]["tier"]
@@ -101,7 +101,7 @@ class MypagesController < ApplicationController
         game_id = current_user.usersgames.find_by_category_id(Category.find_by_game_name("ow")).user_nickname
         puts "-----------"
         puts game_id
-        ow_id = game_id.gsub!("#","-")
+        ow_id = game_id.gsub("#","-")
         puts ow_id
         puts "-----------"
         
@@ -113,7 +113,7 @@ class MypagesController < ApplicationController
         # 오버와치 포지션 가져오기
         url = URI.encode("https://www.overbuff.com/players/pc/" + ow_id + "?mode=competitive")
         page = Nokogiri::HTML(open(url))
-        pos = page.xpath("/html/body/div[1]/div[3]/div/div[3]/div[2]/div[2]/div/section/article/table/tbody/tr[1]/td[1]/a/img").attr("alt")
+        pos = page.xpath("/html/body/div[1]/div[3]/div/div[3]/div[2]/div[2]/div/section/article/table/tbody/tr[1]/td[1]/a/img").attr("alt").text
         
         return game_data = {"MMR": mmr, "주 포지션": pos}
     end

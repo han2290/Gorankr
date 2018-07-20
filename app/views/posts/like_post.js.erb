@@ -1,0 +1,14 @@
+var like_count = parseInt($('.like-count').text());
+console.log(like_count)
+if(<%= @like.frozen? %>) {
+    like_count = like_count - 1
+    $('.likebtn').attr('class','likebtn fa fa-thumbs-o-up')
+    console.log(like_count)
+    $('.like-count').text(String(like_count))
+    $('.like-count-s').text(String(like_count))
+} else {
+    like_count = like_count + 1
+    $('.likebtn').attr('class','likebtn mdi mdi-cancel')
+    $('.like-count').text(String(like_count))
+    $('.like-count-s').text(String(like_count))
+}

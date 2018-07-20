@@ -12,6 +12,12 @@ class PostsController < ApplicationController
     
     def show
         @user = User.find(@post.user_id)
+        @user_likes_post = Like.where(user_id: current_user.id, post_id: @post.id).first
+        
+        viewcount = @post.view_count + 1
+        @post.update(view_count: viewcount)
+        
+        
     end
     
     def edit
@@ -57,6 +63,18 @@ class PostsController < ApplicationController
     def upload_image
         @image = Image.create(image_path: params[:upload][:image])
         render json: @image
+    end
+    
+    
+    # Like
+    
+    def like_post
+        @like = Like.where(user_id: current_user.id, post_id: params[:post_id]).first
+        if @like.nil?
+          @like = Like.create(user_id: current_user.id, post_id: params[:post_id])
+        else
+          @like.destroy
+        end
     end
     
     

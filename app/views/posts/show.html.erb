@@ -37,8 +37,8 @@
                                         <div class= "d-flex align-items-end flex-column" style="width: 50%;">
                                             <small class="pt-2"><%= @post.created_at.strftime("%Y-%m-%d")%></small>
                                             <small class="p-0">
-                                                    조회수 <strong>500</strong>
-                                                    추천수 <strong>500</strong>
+                                                    조회수 <strong><%= @post.view_count%></strong>
+                                                    추천수 <strong class="like-count-s"><%= @post.likes.size %></strong>
                                             </small>
                                         </div>
                                         </div>
@@ -56,10 +56,16 @@
                             <!--하위 영역-->
                             <div class="d-flex justify-content-center m-t-20 pr-0 mr-0">
                                 <div class="d-flex ">
-                                    <a href="#"  class="mr-2 align-self-center text-primary badge badge-light" style="border-radius: 100%; ">
-                                        <i class="fa fa-thumbs-o-up " style="font-size: 22px"></i>
-                                    </a>
-                                    <h5 class="align-self-center mr-0">500</h5>
+                                    <% if @user_likes_post.nil? %>
+                                        <a href="/likes/<%=@post.id%>" data-remote = "true" class=" mr-2 align-self-center text-primary badge badge-light" style="border-radius: 100%;">
+                                            <i class="likebtn fa fa-thumbs-o-up " style="font-size: 22px"></i>
+                                        </a>
+                                    <% else %>
+                                        <a href="/likes/<%=@post.id%>" data-remote = "true" class=" mr-2 align-self-center text-primary badge badge-light" style="border-radius: 100%;"> 
+                                            <i class="likebtn mdi mdi-cancel" style="font-size: 22px" ></i>
+                                        </a>
+                                    <% end %>
+                                    <h5 class="like-count align-self-center mr-0"><%= @post.likes.size %></h5>
                                 </div>
                             </div>
                         </div>

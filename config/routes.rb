@@ -13,6 +13,9 @@ Rails.application.routes.draw do
   # match
   get '/match'                    =>  'matchs#index'
   
+  # post like
+  get '/likes/:post_id' => 'posts#like_post'
+  
   #post
   post '/uploads'                 => 'posts#upload_image'
   
@@ -35,6 +38,9 @@ Rails.application.routes.draw do
   
   # 데이터 가져오기
   get '/fetch/:category' => 'mypages#fetch_data'
+  
+  
+
   
   
   # test
