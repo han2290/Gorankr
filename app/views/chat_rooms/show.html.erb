@@ -4,8 +4,8 @@
     <!--채팅-->
     <div class="h-100 p-1 m-2 col-md-5 col-sm-12 col-xs-12">
         <div class="card-box p-2 h-100 " data-spy="scroll" data-target="#chat_list_id" data-offset="0">
-            <div class="scroll-chat" style="height: 90%; overflow-x: hidden;overflow-y: auto;">
-                <div id="chat_list_id" class="card form-control d-flex flex-column chat_list " style="">
+            <div class="form-control scroll-chat" style="height: 90%; overflow-x: hidden;overflow-y: auto;">
+                <div class=" d-flex flex-column chat_list " style="">
                     
                     <% if @chat_room.users.include?(current_user) %>
                         <% 
@@ -82,7 +82,7 @@
             <hr>
             <ul class="list-group m-b-0 user-list joined_user_list">
                 <% @chat_room.users.each do |user| %>
-                <li class="list-group-item user-<%= user.id %>">
+                <li class="list-group-item userli user-<%= user.id %>">
                     <div class="user-list-item">
                         <div class="avatar">
                             <img src="<%= user.avatar.thumb%>" alt="">
@@ -115,7 +115,7 @@
 <script>
 $(document).on('ready',function(){
     $(".scroll-chat").scrollTop($(".scroll-chat")[0].scrollHeight);
-    $('li').popover({title: `<p class="text-purple m-0">상세보기</p>`, 
+    $('.userli').popover({title: `<p class="text-purple m-0">상세보기</p>`, 
     content: `  <h5 class="text-primary"><span>Info00</span> - <span>Value</span></h5>
                 <h5 class="text-primary"><span>Info01</span> - <span>Value</span></h5>`, 
     html: true, placement: "bottom"}); 
@@ -138,15 +138,17 @@ $(document).on('ready',function(){
     function user_chat(data) {
         console.log("--------")
         var preuserid = parseInt($('.chat-row').last().attr('data-id'))
-        console.log(data.user_avatar)
+        console.log("이미지 경로-"+data.user_avatar)
+        console.log("이전 아이디-"+String(preuserid))
+        console.log("현재 아이디-"+data.user_id)
         
         $('#imessage')[0].value = ""
         
         if( data.user_id == "<%=current_user.id%>"){
             //본인이 말할 때
-            console.log("true")
+            console.log("본인이 말할 때")
              $('.chat_list').append(`
-                <div class="d-flex flex-row-reverse">
+                <div class="d-flex flex-row-reverse chat-row" data-id="${data.user_id}">
                     <div class="d-flex flex-row-reverse comment" style="width: 70%;">
                         <div class="mr-2">
                             <div class="d-flex flex-row-reverse align-items-end">
@@ -162,7 +164,7 @@ $(document).on('ready',function(){
             console.log("false")
             if(preuserid == parseInt(data.user_id)){
                 //새로운 타인이 말할 때
-                
+                console.log("타인이 새로 말할 때")
                 $('.chat_list').append(`
                 <div class="d-flex flex-row chat-row" data-id="${data.user_id}">
                     <div class="d-flex flex-row comment" style="width: 70%;">
@@ -181,7 +183,7 @@ $(document).on('ready',function(){
                 `);
             }else{
                 //타인이 이어서 말할 때
-                
+                console.log("타인이 이어서 말할 때")
                  $('.chat_list').append(`
                 <div class="d-flex flex-row chat-row" data-id="${data.user_id}">
                     <div class="d-flex flex-row comment" style="width: 70%;">
