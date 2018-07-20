@@ -4,10 +4,13 @@
     <title>TempApp</title>
     <%= csrf_meta_tags %>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <%= stylesheet_link_tag    'application', media: 'all' %>
     <%= stylesheet_link_tag    params[:controller], media: 'all' %>
+    <script src="https://js.pusher.com/4.1/pusher.min.js"></script>
     <%= javascript_include_tag 'application'%>
   </head>
+  
 
   <body>
     <div id="wrapper">

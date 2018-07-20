@@ -1,0 +1,117 @@
+<br><br><br><br>
+<div class="w-100 pl-3 d-flex justify-content-start row"  style="position: absolute; height: 82%; ">
+    
+    <!--채팅-->
+    <div class="h-100 p-1 m-2 col-md-5 col-sm-12 col-xs-12">
+        <div class="card-box p-2 h-100" >
+            <div class="card form-control d-flex flex-column" style="height: 90%;">
+                
+                <!--상대방 말풍선-->
+                <!--처음 말하기-->
+                <div class="d-flex flex-row">
+                    <div class="d-flex flex-row comment" style="width: 70%;">
+                        <img src="<%= asset_path 'users/avatar-3.jpg' %>" alt="" class="comment-avatar">
+                        <div class="ml-2 ">
+                            <h5 class="m-0">존잘남</h5>
+                            <p class="card border-light mb-0 mt-1 p-2">안녕! !</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!--이어서 말하기-->
+                <div class="d-flex flex-row">
+                    <div class="d-flex flex-row comment" style="width: 70%;">
+                        <!--만일 이전 메세지 주인과 최근 메시지 주인이 같다면 img src 공백 처리-->
+                        <img src="" alt="" class="comment-avatar">
+                        <div class="ml-2 ">
+                            <!--위 조건을 만족하면 아이디 출력 안함-->
+                            <!--<h5 class="m-0">존잘남</h5>-->
+                            <p class="card border-light  mb-0 mt-1 p-2">요즘 뭐하고지내 !</p>
+                        </div>
+                    </div>
+                </div>
+                
+                
+                
+                <!--본인 말풍선 d-flex -->
+                <!--처음 말하기, 이어서 말하기-->
+                <div class="d-flex flex-row-reverse">
+                    <div class="d-flex flex-row-reverse comment" style="width: 70%;">
+                        <div class="mr-2">
+                                <p class="card border-light mb-0 mt-1 p-2">안녕하세요 정말 갓영민님이 맞으신가요? 팬이에요! 꺄아아아아아아아아ㅏㅇ아아아아아아악</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex flex-row-reverse">
+                    <div class="d-flex flex-row-reverse comment" style="width: 70%;">
+                        <div class="mr-2">
+                                <p class="card border-light mb-0 mt-1 p-2">아니?</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex mt-2" style="height: 8%">
+                <input class="h-100 mr-2 p-2 form-control " type="text" style="width: 90%;">
+                <button class="h-100 btn btn-primary text-center d-flex justify-content-center" type = "submit" style="width: 10%">
+                    <i class="fa fa-send" style="font-size: 20px;"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    
+    <!--참여 유저-->
+    <div class="h-100 p-1 m-2 col-md-4 col-sm-12 col-xs-12" >
+        <div class="card-box p-2 h-100">
+            <h4 class="text-center">UserList</h4>
+            <hr>
+            <ul class="list-group m-b-0 user-list">
+                <li class="list-group-item">
+                    <div class="user-list-item">
+                        <div class="avatar">
+                            <img src="<%= asset_path 'users/avatar-2.jpg' %>" alt="">
+                        </div>
+                        <div class="user-desc">
+                            <span class="name">Michael Zenaty</span>
+                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div class="user-list-item">
+                        <div class="avatar">
+                            <img src="<%= asset_path 'users/avatar-2.jpg' %>" alt="">
+                        </div>
+                        <div class="user-desc">
+                            <span class="name">Michael Zenaty</span>
+                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div class="user-list-item">
+                        <div class="avatar">
+                            <img src="<%= asset_path 'users/avatar-2.jpg' %>" alt="">
+                        </div>
+                        <div class="user-desc">
+                            <span class="name">Michael Zenaty</span>
+                        </div>
+                    </div>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<!-- Javascript contents -->
+<% content_for 'javascript_content' do %>
+<%= javascript_include_tag params[:controller] %>
+<script>
+$(document).on('ready',function(){
+    $('li').popover({title: `<p class="text-purple m-0">상세보기</p>`, 
+    content: `  <h5 class="text-primary"><span>Info00</span> - <span>Value</span></h5>
+                <h5 class="text-primary"><span>Info01</span> - <span>Value</span></h5>`, 
+    html: true, placement: "bottom"}); 
+})
+</script>
+<% end %>

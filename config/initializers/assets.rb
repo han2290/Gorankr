@@ -15,4 +15,6 @@ Rails.application.config.assets.precompile += %w( home.js
                                                   mypages.js
                                                   mypages.scss
                                                   matchs.js
-                                                  matchs.scss)
+                                                  matchs.scss
+                                                  chat_rooms.js
+                                                  chat_rooms.scss)

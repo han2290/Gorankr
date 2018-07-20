@@ -10,6 +10,18 @@ Rails.application.routes.draw do
   post 'mypage/game'                =>  'mypages#add_game'
   delete 'mypage/game/:usersgameid' =>  'mypages#destroy_game'
   
+  # Chat
+  post '/chat_rooms/:id/join' => "chat_rooms#user_admit_room", as: 'join_chat_room'
+  post '/chat_rooms/:id/chat' => "chat_rooms#chat", as: "chat_chat_room"
+  delete '/chat_rooms/:id/exit' => "chat_rooms#user_exit_room", as: "exit_chat_room"
+  get '/chat_rooms' => "chat_rooms#index", as: 'chat_rooms'
+  post '/chat_rooms' => 'chat_rooms#create'
+  get '/chat_rooms/new' => 'chat_rooms#new', as: 'new_chat_room'
+  get '/chat_rooms/:id/edit' => 'chat_rooms#edit', as: 'edit_chat_room'
+  get '/chat_rooms/:id' => 'chat_rooms#show', as: 'chat_room'
+  delete '/chat_rooms/:id' => 'chat_rooms#destroy'
+  
+  
   # match
   get '/match'                    =>  'matchs#index'
   

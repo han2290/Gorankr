@@ -19,4 +19,15 @@ class User < ApplicationRecord
   # 하나의 유저는 여러 추천을 가짐
   # has_many :recomend
   # has_many :users, through: :recommend
+  
+  # chat
+  has_many :chat_rooms, through: :admissions
+  has_many :chats
+  has_many :admissions
+  
+  def joined_room?(room)
+      self.chat_rooms.include?(room)
+  end
+  
+  
 end
