@@ -1,6 +1,8 @@
 class HomeController < ApplicationController
   before_action :authenticate_user!
   def index
+    @players = Player.all
+    @player = Player.find_by_user_id(current_user.id)
   end
   
   def users

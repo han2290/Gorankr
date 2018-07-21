@@ -171,8 +171,6 @@ $(document).on('ready',function(){
                         <!--만일 이전 메세지 주인과 최근 메시지 주인이 같다면 img src 공백 처리-->
                         <img src="" alt="" class="comment-avatar">
                         <div class="ml-2 ">
-                            <!--위 조건을 만족하면 아이디 출력 안함-->
-                            <!--<h5 class="m-0">존잘남</h5>-->
                             <div class="d-flex flex-row align-items-end">
                                 <p class="card border-light mb-0 mt-1 p-2">${data.message}</p>
                                 <small class="pl-1">${data.create_at_HM}</small>
@@ -189,7 +187,7 @@ $(document).on('ready',function(){
                     <div class="d-flex flex-row comment" style="width: 70%;">
                         <img src="${data.user_avatar}" alt="" class="comment-avatar">
                         <div class="ml-2 ">
-                            <h5 class="m-0">${data.user_name}ㅀㅀㅀㄹㅀ</h5>
+                            <h5 class="m-0">${data.user_name}</h5>
                             <div class="d-flex flex-row align-items-end">
                                 <p class="card border-light mb-0 mt-1 p-2">${data.message}</p>
                                 <small class="pl-1">${data.create_at_HM}</small>

@@ -51,7 +51,18 @@ Rails.application.routes.draw do
   # 데이터 가져오기
   get '/fetch/:category' => 'mypages#fetch_data'
   
+  # Queue matching routes
+  post '/players' => 'players#create'
+  patch '/players/update' => 'players#update'
+  post '/queue/lol_duo' => 'players#duo_match'
+  post '/queue/lol_squad' => 'players#team_match_lol'
+  post '/queue/pubg_duo' => 'players#duo_match'
+  post '/queue/pubg_squad' => 'players#team_match_pubg'
+  post '/queue/ow_duo' => 'players#duo_match'
+  post '/queue/link' => 'players#link_players'
   
+  # Pusher authentication for presence channel
+  post '/pusher/auth' => 'pusher#auth'
 
   
   
