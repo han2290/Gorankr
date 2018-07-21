@@ -1,6 +1,7 @@
 class PostsController < ApplicationController
     before_action :set_post, only: [:show, :edit, :update, :destroy, :create_comment]
     before_action :authenticate_user!
+    impressionist :actions=>[:show]
     
     
     def index

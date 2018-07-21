@@ -1,0 +1,21 @@
+<div class="card-box">
+
+
+<h4 class="header-title m-t-0 m-b-30">베스트 인기 글</h4>
+
+<% Post.order('posts.impressions_count DESC').limit(4).each do |best| %>
+    <ul class="list-group m-b-0 user-list">
+        <li class="list-group-item">
+            <a href="#" class="user-list-item">
+                <div class="comment">
+                    <img src="https://www.bloter.net/wp-content/uploads/2017/06/%EA%B5%AC%EA%B8%80-765x430.png" alt="" class="comment-avatar">
+                </div>
+                <div class="user-desc">
+                    <span class="name"><%= best.title %></span>
+                    <span class="desc"><%= Category.find(best.category_id).game_full_name %></span>
+                </div>
+            </a>
+        </li>
+    </ul>
+<% end %>
+</div>

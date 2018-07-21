@@ -50,7 +50,7 @@
                             <!--내용 영역-->
                             <div class="mb-1">
                                 <%= simple_format(@post.content) %>
-                            <br><br><br><br><br><br><br><br><br>
+                            <br><br>
                             </div>
                             
                             <!--하위 영역-->
@@ -130,125 +130,10 @@
 
 
             </div>
+            
 
             <div class="col-sm-4">
-                <div class="card-box">
-
-
-                    <h4 class="header-title m-t-0 m-b-30">베스트 인기 글</h4>
-
-                    <ul class="list-group m-b-0 user-list">
-                        <li class="list-group-item">
-                            <a href="#" class="user-list-item">
-                                <div class="comment">
-                                    <img src="https://www.bloter.net/wp-content/uploads/2017/06/%EA%B5%AC%EA%B8%80-765x430.png" alt="" class="comment-avatar">
-                                </div>
-                                <div class="user-desc">
-                                    <span class="name">글 제목은 제한 없이 일단 길게 써본다.</span>
-                                    <span class="desc">카테고리</span>
-                                </div>
-                            </a>
-                        </li>
-
-                        <li class="list-group-item">
-                            <a href="#" class="user-list-item">
-                                <div class="comment">
-                                    <img src="http://static.inven.co.kr/column/2014/05/21/news/i1568305431.jpg" alt="" class="comment-avatar">
-                                </div>
-                                <div class="user-desc">
-                                    <span class="name">뿌애애애애애애애애애앵.</span>
-                                    <span class="desc">카테고리</span>
-                                </div>
-                            </a>
-                        </li>
-
-                        <li class="list-group-item">
-                            <a href="#" class="user-list-item">
-                                <div class="comment">
-                                    <img src="https://cdn.namuwikiusercontent.com/s/ec96b7afb1f5fa0e3dc6144472683c6b2cfc72c91a5bcdfee98d2ae6e8d6ad189a4ad9f111b3a4e1d117bfa841499c7a661729bd8094ed91a39e27ec044a03c76e1c32eb5ba2e06847b1a652c980c5cd?e=1532360774&k=hZL8f0PM36GyAL_0k3Z-Jw" alt="" class="comment-avatar">
-                                </div>
-                                <div class="user-desc">
-                                    <span class="name">니아ㅓ린야러잳 ㅑ</span>
-                                    <span class="desc m-b-0">카테고리</span>
-                                </div>
-                            </a>
-                        </li>
-
-                        <li class="list-group-item">
-                            <a href="#" class="user-list-item">
-                                <div class="comment">
-                                    <img src="<%= asset_path 'users/avatar-6.jpg' %>" alt="" class="comment-avatar">
-                                </div>
-                                <div class="user-desc">
-                                    <span class="name">Michael Zenaty</span>
-                                    <span class="desc">Programmer</span>
-                                </div>
-                            </a>
-                        </li>
-
-                        <li class="list-group-item">
-                            <a href="#" class="user-list-item">
-                                <div class="comment">
-                                    <img src="<%= asset_path 'users/avatar-1.jpg' %>" alt="" class="comment-avatar">
-                                </div>
-                                <div class="user-desc">
-                                    <span class="name">Mat Helme</span>
-                                    <span class="desc">Manager</span>
-                                </div>
-                            </a>
-                        </li>
-                        
-                        <li class="list-group-item">
-                            <a href="#" class="user-list-item">
-                                <div class="comment">
-                                    <img src="<%= asset_path 'users/avatar-3.jpg' %>" alt="" class="comment-avatar">
-                                </div>
-                                <div class="user-desc">
-                                    <span class="name">Mat Helme</span>
-                                    <span class="desc">Manager</span>
-                                </div>
-                            </a>
-                        </li>
-                        
-                        <li class="list-group-item">
-                            <a href="#" class="user-list-item">
-                                <div class="comment">
-                                    <img src="<%= asset_path 'users/avatar-1.jpg' %>" alt="" class="comment-avatar">
-                                </div>
-                                <div class="user-desc">
-                                    <span class="name">Mat Helme</span>
-                                    <span class="desc">Manager</span>
-                                </div>
-                            </a>
-                        </li>
-                        
-                        <li class="list-group-item">
-                            <a href="#" class="user-list-item">
-                                <div class="comment">
-                                    <img src="<%= asset_path 'users/avatar-2.jpg' %>" alt="" class="comment-avatar">
-                                </div>
-                                <div class="user-desc">
-                                    <span class="name">Mat Helme</span>
-                                    <span class="desc">Manager</span>
-                                </div>
-                            </a>
-                        </li>
-                        
-                        <li class="list-group-item">
-                            <a href="#" class="user-list-item">
-                                <div class="comment">
-                                    <img src="<%= asset_path 'users/avatar-3.jpg' %>" alt="" class="comment-avatar">
-                                </div>
-                                <div class="user-desc">
-                                    <span class="name">Mat Helme</span>
-                                    <span class="desc">Manager</span>
-                                </div>
-                            </a>
-                        </li>
-                        
-                        
-                    </ul>
-                </div>
+                <%= render 'toppost' %>
             </div>
         </div>
     </div> <!-- container -->

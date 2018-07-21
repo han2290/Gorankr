@@ -1,4 +1,6 @@
 class Post < ApplicationRecord
+    is_impressionable :counter_cache => true
+    
     belongs_to :user # 하나의 유저에 속한다.
     belongs_to :category # 하나의 카테고리에 속한다.
     

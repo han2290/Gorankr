@@ -64,6 +64,9 @@ gem 'figaro', '~> 1.1.1'
 # pusher for chat rooms
 gem 'pusher'
 
+# impressions
+gem 'impressionist'
+
 group :development, :test do
   gem 'rails_db'
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

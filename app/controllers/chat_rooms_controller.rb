@@ -45,7 +45,9 @@ class ChatRoomsController < ApplicationController
   end
   
   def chat
-    @chat_room.chats.create(user_id: current_user.id, message: params[:message])
+    unless params[:message].length.eql?(0)
+      @chat_room.chats.create(user_id: current_user.id, message: params[:message])
+    end
   end
 
   # POST /chat_rooms
