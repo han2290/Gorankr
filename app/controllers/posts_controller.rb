@@ -7,8 +7,8 @@ class PostsController < ApplicationController
     def index
         @game_name = params[:game_name]
         category = Category.find_by_game_name(@game_name).id
-        
-        @posts = Post.where(category_id: category)
+        @posts = Post.where(category_id: category).page params[:page]
+        # @posts = Post.where(category_id: category)
     end
     
     def show
@@ -28,7 +28,7 @@ class PostsController < ApplicationController
     end
     
     def update
-        Post.update(post_params)
+        @post.update(post_params)
         puts :back
         redirect_to "/boards/#{@post.category.game_name}/#{@post.id}"
     end

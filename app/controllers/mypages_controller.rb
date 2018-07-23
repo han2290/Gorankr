@@ -25,6 +25,24 @@ class MypagesController < ApplicationController
         redirect_to :back
     end
     
+    def fetch_data_method(category)
+        puts "성공!!!!!!"
+        case category
+        when "lol"
+            @game_data = fetch_lol_data
+        when "ow"
+            @game_data = fetch_ow_data
+        when "pubg"
+            @game_data = fetch_pubg_data
+        else
+            puts "게임을 정확히 입력해주세요!"
+        end
+        
+        puts "최종 데이터 확인"
+        puts @game_data
+        @data = "hello"
+    end
+    
     def fetch_data
         puts "성공!!!!!!"
         case params[:category]
@@ -35,7 +53,7 @@ class MypagesController < ApplicationController
         when "pubg"
             @game_data = fetch_pubg_data
         else
-            puts "실패! 어떤 게임도 로드하지 못함"
+            puts "게임을 정확히 입력해주세요!"
         end
         
         puts "최종 데이터 확인"
@@ -74,7 +92,7 @@ class MypagesController < ApplicationController
         user_lol_league = JSON.parse(user_lol_league)
         tier = user_lol_league[0]["tier"]
         
-        return game_date = {"티어": tier, "주 포지션 1": pos1, "주 포지션 2": pos2}
+        return game_date = {"티어": tier, "주 포지션 1": pos1}
         
     end
     
@@ -86,8 +104,6 @@ class MypagesController < ApplicationController
         soloMMR = page.xpath('//*[@id="profile"]/div[3]/div[1]/section[1]/div[1]/div[1]/div[2]/span[1]').text
         duoMMR = page.xpath('//*[@id="profile"]/div[3]/div[1]/section[2]/div[1]/div[1]/div[2]/span[1]').text
         squadMMR = page.xpath('//*[@id="profile"]/div[3]/div[1]/section[3]/div[1]/div[1]/div[2]/span[1]').text
-        
-        
         
         puts "------데이터-------"
         puts soloMMR

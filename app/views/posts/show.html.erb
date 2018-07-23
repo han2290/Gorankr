@@ -10,7 +10,7 @@
                                 <!--왼쪽-->
                                 <div class="d-flex flex-column">
                                     <div class="d-flex justify-content-between">
-                                        <h4 class="m-0 p-0"><%=@post.title%></h4>
+                                        <h3 class="m-0 p-0"><%=@post.title%></h3>
                                         <% if current_user.id == @post.user_id %>
                                         <div class="dropdown pull-right">
                                             <a href="#" class="dropdown-toggle arrow-none card-drop" data-toggle="dropdown" aria-expanded="false">
@@ -80,10 +80,10 @@
                 <%= form_tag "/posts/#{@post.id}/comments", method: :post, class: "card-box"  do %>
                 <!--<form action="/posts/<%#=@post.id%>/comments" method="post" class="card-box">-->
                     <span class="input-icon icon-right">
-                        <textarea name="content" rows="2" class="form-control" placeholder="Post a new message"></textarea>
+                        <textarea name="content" rows="2" class="form-control" placeholder="댓글을 작성해 주세요"></textarea>
                     </span>
                     <div class="p-t-10 pull-right">
-                        <button type="submit" class="btn btn-sm btn-primary waves-effect waves-light">Send</button>
+                        <button type="submit" class="btn btn-sm btn-primary waves-effect waves-light">댓글 작성</button>
                     </div>
                     <br><br>
                 <!--</form>-->
@@ -122,10 +122,6 @@
                         </div>
                     </div>
                     <% end %>
-
-                    <div class="m-t-30 text-center">
-                        <a href="" class="btn btn-default waves-effect waves-light btn-sm">Load More...</a>
-                    </div>
                 </div>
 
 

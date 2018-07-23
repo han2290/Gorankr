@@ -3,6 +3,8 @@ class CreateCategories < ActiveRecord::Migration[5.0]
     create_table :categories do |t|
       t.string :game_name
       t.string :game_full_name
+      t.string :image_path
+      
       t.timestamps
     end
   end

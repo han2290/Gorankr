@@ -1,0 +1,19 @@
+<br><br><br><br><br><br><br>
+<div id="load">
+     <img src="/images/loading/loading.gif" alt="loading">
+</div>
+
+<button id="show"></button>
+
+<% content_for 'javascript_content' do %>
+    <%= javascript_include_tag params[:controller] %>
+    <script>
+        $('#show').on('click', function() {
+            $('#load').show()
+        })
+        $('#load').hide()
+        
+        
+        
+    </script>
+<% end %>

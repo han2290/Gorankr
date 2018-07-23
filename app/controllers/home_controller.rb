@@ -1,6 +1,13 @@
 class HomeController < ApplicationController
   before_action :authenticate_user!
+  
+  def load
+  end
+  
+  
   def index
+    @firstgmae = current_user.usersgames.first
+    @games = current_user.usersgames.all
     @players = Player.all
     @player = Player.find_by_user_id(current_user.id)
   end

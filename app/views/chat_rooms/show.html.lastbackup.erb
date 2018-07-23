@@ -1,0 +1,230 @@
+<br><br><br><br>
+<div class="w-100 pl-3 d-flex justify-content-start row"  style="position: absolute; height: 82%; ">
+    
+    <!--채팅-->
+    <div class="h-100 p-1 m-2 col-md-5 col-sm-12 col-xs-12">
+        <div class="card-box p-2 h-100 " data-spy="scroll" data-target="#chat_list_id" data-offset="0">
+            <div class="form-control scroll-chat" style="height: 90%; overflow-x: hidden;overflow-y: auto;">
+                <div class=" d-flex flex-column chat_list " style="">
+                    
+                    <% if @chat_room.users.include?(current_user) %>
+                        <% 
+                        preuserid = 0
+                        @chat_room.chats.each do |chat| 
+                        %>
+                            <% unless chat.user.id == current_user.id %>
+                                <% unless preuserid == chat.user.id %>
+                                <!--다른 사람이 처음 말할 떄-->
+                                <div class="d-flex flex-row chat-row" data-id="<%= chat.user.id%>" >
+                                    <div class="d-flex flex-row comment" style="width: 70%;">
+                                        <img src="<%=chat.user.avatar.thumb%>" alt="" class="comment-avatar">
+                                        <div class="ml-2 ">
+                                            <h5 class="m-0"><%= chat.user.username %></h5>
+                                            <div class="d-flex flex-row align-items-end">
+                                                <p class="card border-light mb-0 mt-1 p-2"><%= chat.message %> </p>
+                                                <small class="pl-1"><%= chat.created_at.strftime("%H:%M") %></small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <% else %>
+                                
+                                <!--다른 사람이 이어서 말 할 때-->
+                                <div class="d-flex flex-row chat-row" data-id="<%= chat.user.id%>">
+                                    <div class="d-flex flex-row comment" style="width: 70%;">
+                                        <!--만일 이전 메세지 주인과 최근 메시지 주인이 같다면 img src 공백 처리-->
+                                        <img src="" alt="" class="comment-avatar">
+                                        <div class="ml-2 ">
+                                            <!--위 조건을 만족하면 아이디 출력 안함-->
+                                            <!--<h5 class="m-0">존잘남</h5>-->
+                                            <div class="d-flex flex-row align-items-end">
+                                                <p class="card border-light mb-0 mt-1 p-2"><%= chat.message %> </p>
+                                                <small class="pl-1"><%= chat.created_at.strftime("%H:%M") %></small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <% end %>
+                            <% else %>
+                                <div class="d-flex flex-row-reverse chat-row" data-id="<%= chat.user.id%>">
+                                    <div class="d-flex flex-row-reverse comment" style="width: 70%;">
+                                        <div class="mr-2">
+                                            <div class="d-flex flex-row-reverse align-items-end">
+                                                <p class="card border-light mb-0 mt-1 p-2"><%= chat.message %> </p>
+                                                <small class="pr-1"><%= chat.created_at.strftime("%H:%M") %></small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% end 
+                                preuserid = chat.user.id %>
+                        <% end %> 
+                        
+                    <% end %>
+                </div>
+            </div>
+            <%= form_tag("/chat_rooms/#{@chat_room.id}/chat", class: "d-flex mt-2", style: "height: 8%", remote: true) do %>
+                <input id="imessage" type="text" name="message" class="h-100 mr-2 p-2 form-control " style="width: 90%;"></input>
+                <button class="h-100 btn btn-primary text-center d-flex justify-content-center" type = "submit" style="width: 10%">
+                    <i class="fa fa-commenting" style="font-size: 35px;"></i>
+                </button>
+            <% end %>
+        </div>
+    </div>
+    
+    
+    <!--참여 유저-->
+    <div class="h-100 p-1 m-2 col-md-4 col-sm-12 col-xs-12" >
+        <div class="card-box p-2 h-100 d-flex flex-column">
+            <h4 class="text-center">UserList</h4>
+            <hr>
+            <ul class="list-group m-b-0 user-list joined_user_list">
+                <% @user_data.each do |user| %>
+                <li class="list-group-item userli user-<%= user[:username] %>">
+                    <div class="user-list-item">
+                        <div class="avatar">
+                            <img src="<%= user[:avatar]%>" alt="">
+                        </div>
+                        <div class="user-desc">
+                            <span class="name"><%= user[:username] %></span>
+                            <% user[:gameinfo].each do |k, v|%>
+                            <srong><%=k%>: &nbsp</srong><span><%=v%></span> &nbsp&nbsp
+                            <br>
+                            <% end %>
+                        </div>
+                    </div>
+                </li>    
+                <% end %>
+            </ul>
+            <%= link_to '나가기', exit_chat_room_path(@chat_room),
+                class: "btn btn-warning mt-auto waves-effect waves-light", method: 'DELETE', remote: true, data: {confirm: "방을 나가시겠습니까??"} %>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Javascript contents -->
+<% content_for 'javascript_content' do %>
+<%= javascript_include_tag params[:controller] %>
+<script>
+$(document).on('ready',function(){
+    $(".scroll-chat").scrollTop($(".scroll-chat")[0].scrollHeight);
+
+    
+    
+    function user_joined(data) {
+        $('.joined_user_list').append(`
+        <li class="list-group-item user-${data.user_id}">
+            <div class="user-list-item">
+                <div class="avatar">
+                    <img src="${data.user_avatar}" alt="">
+                </div>
+                <div class="user-desc">
+                    <span class="name">${data.user_name}</span>
+                </div>
+            </div>
+        </li>
+        `)
+        $('.chat_list').append(`<p>${data.user_name} entered this room</p>`);
+    };
+    function user_chat(data) {
+        console.log("--------")
+        var preuserid = parseInt($('.chat-row').last().attr('data-id'))
+        console.log("이미지 경로-"+data.user_avatar)
+        console.log("이전 아이디-"+String(preuserid))
+        console.log("현재 아이디-"+data.user_id)
+        
+        
+        
+        if( data.user_id == "<%=current_user.id%>"){
+            //본인이 말할 때
+            console.log("본인이 말할 때")
+             $('.chat_list').append(`
+                <div class="d-flex flex-row-reverse chat-row" data-id="${data.user_id}">
+                    <div class="d-flex flex-row-reverse comment" style="width: 70%;">
+                        <div class="mr-2">
+                            <div class="d-flex flex-row-reverse align-items-end">
+                                <p class="card border-light mb-0 mt-1 p-2">${data.message} </p>
+                                <small class="pr-1">${data.create_at_HM}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `);
+        }else{
+            //타인이 말할 때
+            console.log("false")
+            if(preuserid == parseInt(data.user_id)){
+                //새로운 타인이 말할 때
+                console.log("타인이 새로 말할 때")
+                $('.chat_list').append(`
+                <div class="d-flex flex-row chat-row" data-id="${data.user_id}">
+                    <div class="d-flex flex-row comment" style="width: 70%;">
+                        <!--만일 이전 메세지 주인과 최근 메시지 주인이 같다면 img src 공백 처리-->
+                        <img src="" alt="" class="comment-avatar">
+                        <div class="ml-2 ">
+                            <div class="d-flex flex-row align-items-end">
+                                <p class="card border-light mb-0 mt-1 p-2">${data.message}</p>
+                                <small class="pl-1">${data.create_at_HM}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `);
+            }else{
+                //타인이 이어서 말할 때
+                console.log("타인이 이어서 말할 때")
+                 $('.chat_list').append(`
+                <div class="d-flex flex-row chat-row" data-id="${data.user_id}">
+                    <div class="d-flex flex-row comment" style="width: 70%;">
+                        <img src="${data.user_avatar}" alt="" class="comment-avatar">
+                        <div class="ml-2 ">
+                            <h5 class="m-0">${data.user_name}</h5>
+                            <div class="d-flex flex-row align-items-end">
+                                <p class="card border-light mb-0 mt-1 p-2">${data.message}</p>
+                                <small class="pl-1">${data.create_at_HM}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `);
+            }
+        }
+         
+        $(".scroll-chat").scrollTop($(".scroll-chat")[0].scrollHeight);
+    };
+    function user_exit(data) {
+        $(`.user-${data.user_id}`).remove();
+        $('.chat_list').append(`<p>${data.user_name} exited this room</p>`);
+    };
+    function delete_room(data) {
+        alert("Room has been deleted!");
+        location.href = "root_path"
+    }
+    
+    var pusher = new Pusher("<%= ENV["PUSHER_KEY"]%>", {
+      cluster: "<%= ENV["PUSHER_CLUSTER"]%>",
+      encrypted: true
+    });
+	// This is different from the index channel because it only applies to user who are currently in the room
+    var channel = pusher.subscribe('chat_room_<%= @chat_room.id %>');
+    channel.bind('join', function(data) {
+        console.log("join event")
+        console.log(data);
+        user_joined(data);
+    });
+    channel.bind('chat', function(data) {
+        console.log(data);
+        user_chat(data);
+    });
+    channel.bind('exit', function(data) {
+        console.log(data);
+        user_exit(data);
+    });
+    
+})
+</script>
+<% end %>

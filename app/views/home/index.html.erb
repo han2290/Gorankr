@@ -1,48 +1,86 @@
-<h2>너 내 동료가 되어라!</h2>
-<hr/>
-<%= form_tag('/players', method: "POST", remote: true) do %>
-    <%= select_tag "game_name", 
-    "<option value='lol'>리그오브레전드</option>
-     <option value='pubg'>배틀그라운드</option>
-     <option value='ow'>오버워치</option>".html_safe %>
-    <%= submit_tag "게임 설정" , class: "btn btn-primary" %>
-<% end %>
 
-<div class="match_type"></div>
-
-<br/><br/>
-<h2>In Queue</h2>
-<hr>
-<table border="2">
-    <tr>
-        <th>User Name</th>
-        <th>Age</th>
-        <th>Game Name</th>
-        <th>Game Data</th>
-        <th>Update</th>
-    </tr>
-    <% @players.each do |player| %>
-    <tr>
-        <td><%= player.user_id %></td>
-        <td><%= player.age %></td>
-        <td><%= player.category.game_name %></td>
-        <td><%= player.game_data %></td>
-        <td><%= player.updated_at %></td>
-    </tr>
-    <% end %>
-</table>
-
-<script>
-$(document).on('ready', function() {
+<!-- Start content -->
+<div class="content">
     
+  <div class="container-fluid">
+    <div class="row">
+        
+      <!---->
+        <div class="d-flex align-items-center justify-content-center flex-column " 
+        style="height: 85%; width: 81%; position: absolute;" >
+            <div id="load">
+                <div class="d-flex align-items-center flex-column justify-content-center" style="height: 100%; width: 100%;" >
+                    <img src="/images/loading/loading.gif" alt="loading"></img>
+                    <p class="text-primary"> 플레이어를 찾는 중입니다.</p>
+                </div>
+            </div>
+            
+    		 <div class="card-box">
+    		  <div style="height: 60%;">
+    		    <%= render 'shared/cardlist' %>
+    		  </div>
+    		  <div class="w-100 d-flex flex-column " style="height: 40%;">
+    		      <br>
+    		  <% unless @games.size < 1%>
+    		    <div class="h-75">
+    		      <h4 class="game-title" align="center"><%= @firstgmae.category.game_full_name %></h4>
+    		      <p >현재 <%= Player.where(category_id: 1).count %> 명이 이 게임에서 팀원을 찾는 중입니다.</p>
+    		    </div>
+    		    
+    		    <div class="d-flex h-25 align-items-end justify-content-end">
+    		      &nbsp&nbsp
+    		      
+    		      <button onclick="isloading.start()" class="btn btn-pink waves-effect w-md waves-light m-b-5  <%= @firstgmae.category.game_name%>_duo"
+    		        data-category="<%=@firstgmae.category.id%>">Duo</button>
+    		        <hr>
+    		      <button onclick="isloading.start()" class="btn btn-pink waves-effect w-md waves-light m-b-5 <%= @firstgmae.category.game_name%>_squad"
+    		        data-category="<%=@firstgmae.category.id%>">Squad</button>
+    		    </div>
+    		   <% else %>
+    		       <div class="h-75">
+    		      <h4 class="game-title">게임을 연동해 주세요</h4>
+    		    </div>
+    		    <% end %>
+    		    <br>
+    		  </div>
+             </div>
+        </div><!-- end col -->
+      
+    </div>
+  </div> <!-- container -->
+</div> <!-- content -->
+
+
+<!-- Javascript contents -->
+<% content_for 'javascript_content' do %>
+<%= javascript_include_tag params[:controller] %>
+<script>
+ $('#load').hide();
+$('.popp').popover();
+$('#carouselExampleIndicators').on('slid.bs.carousel', function () {
+  var game = $('.carousel-item.active').attr('data-game')
+  var gamename = $('.carousel-item.active').attr('data-fullname')
+  var category = $('.carousel-item.active').attr('data-category')
+  console.log(gamename);
+  $('.game-title').text(gamename);
+//   $('.game-href').attr('data-gamename',`${game}`)
+  $('.queduo').attr('class',`btn btn-dark queduo  ${game}_duo`);
+  $('.queduo').attr('data-category',`${category}`);
+  $('.quesquad').attr('data-category',`${category}`);
+  
+  
+})
+
+$(document).on('ready', function() {
+   
     // Check online status of a player and updates the connection time
-    // setInterval(function () {
-    //     console.log("Updating player time");
-    //     $.ajax({
-    //         url: "/players/update",
-    //         method: "PATCH",
-    //     });
-    // }, 5000);
+    setInterval(function () {
+        console.log("Updating player time");
+        $.ajax({
+            url: "/players/update",
+            method: "PATCH",
+        });
+    }, 5000);
     
     var pusher = new Pusher('<%= ENV["PUSHER_KEY"]%>', {
         cluster: "<%= ENV["PUSHER_CLUSTER"]%>",
@@ -78,11 +116,19 @@ $(document).on('ready', function() {
                         }
                     });
                 } else {
-                    console.log("Not all accepted")
+                    console.log("플레이어 중 한명이 수락을 누르지 않았습니다.")
+                    $.ajax({
+                        url: "/queue/delete",
+                        method: "DELETE"
+                    })
                 }
             }, 12000);
         } else {
-            alert("매칭 거절");
+            alert("매칭을 거절하셨습니다.");
+            $.ajax({
+                    url: "/queue/delete",
+                    method: "DELETE"
+            })
             location.reload();
         }
     });
@@ -95,38 +141,69 @@ $(document).on('ready', function() {
 
 $(document).on('click', '.lol_duo', function() {
     $.ajax({
-        url: "/queue/lol_duo",
+        url: "/queue/create",
         method: "POST",
+        data: {
+            category_id: $(this).attr('data-category'),
+            team_queue: false
+        }
     });
 });
 $(document).on('click', '.lol_squad', function() {
     $.ajax({
-        url: "/queue/lol_squad",
+        url: "/queue/create",
         method: "POST",
+        data: {
+            category_id: $(this).attr('data-category'),
+            team_queue: true
+        }
     });
 });
 $(document).on('click', '.pubg_duo', function() {
     $.ajax({
-        url: "/queue/pubg_duo",
+        url: "/queue/create",
         method: "POST",
+        data: {
+            category_id: $(this).attr('data-category'),
+            team_queue: false
+        }
     });
 });
 $(document).on('click', '.pubg_squad', function() {
     $.ajax({
-        url: "/queue/pubg_squad",
+        url: "/queue/create",
         method: "POST",
+        data: {
+            category_id: $(this).attr('data-category'),
+            team_queue: true
+        }
     });
 });
 $(document).on('click', '.ow_duo', function() {
     $.ajax({
-        url: "/queue/pw_duo",
+        url: "/queue/create",
         method: "POST",
+        data: {
+            category_id: $(this).attr('data-category'),
+            team_queue: false
+        }
     });
 });
+
 $(document).on('click', '.btn-dark', function() {
     setTimeout(function() {
         alert("현재 비슷한 플레이어를 찾을 수 없습니다")
-    }, 30000);
+        isloading.stop();
+        $.ajax({
+            url: "/queue/delete",
+            method: "DELETE"
+        })
+    }, 20000);
 });
 
+
+
 </script>
+<% end %>
+
+

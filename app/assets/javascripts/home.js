@@ -13,9 +13,21 @@
 
 // Home
 //= require jquery.knob
-// morris.min
 //= require raphael-min
-// require jquery.dashboard
+//= require toastr.min
 
 //= require jquery.core
 //= require jquery.app
+
+
+
+
+isloading = {
+          start: function() {
+            $('#load').show()
+          },
+          stop: function() {
+            $('#load').hide()
+          }
+        }
+

@@ -2,6 +2,7 @@ class ChatRoom < ApplicationRecord
     has_many :admissions
     has_many :users, through: :admissions
     has_many :chats
+    belongs_to :category
 
     after_commit :create_chat_room_notification, on: :create
     after_commit :edit_chat_room_notification, on: :update

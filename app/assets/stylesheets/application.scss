@@ -6,3 +6,9 @@
 @import 'dragula.min';
 @import "summernote-bs4";
 @import "summernote-custom-theme.min";
+
+::-webkit-scrollbar {width: 12px; height: 12px;  }
+::-webkit-scrollbar-button:start:decrement, 
+::-webkit-scrollbar-button:end:increment {display: block; width: 12px;height: 12px; background: url() rgba(0,0,0,.05);}
+::-webkit-scrollbar-track {     background: rgba(0,0,0,.05); }
+::-webkit-scrollbar-thumb {  background: rgba(0,0,0,.1);  }

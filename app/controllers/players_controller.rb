@@ -1,18 +1,25 @@
 class PlayersController < ApplicationController
-    #before_action :filter_players, only: [:duo_match, :team_match_lol, :team_match_pubg]
-    before_action :update_match_status, only: [:team_match_lol, :team_match_pubg]
+    before_action :filter_players, only: [:queue]
+    after_action :queue, only: [:create]
     # 현재 큐를 돌리고 있는 게이머들을 관리하고 큐를 직접 잡아준다.
     
     # 큐에 들어갈 유저정보를 담아서 player 모델 데이터를 생성해준다
     def create
         Player.find_by_user_id(current_user.id).try(:destroy)
+        puts "-----------create------------"
+        puts params[:category_id]
+        puts params[:team_queue]
             
         @player = Player.new
         @player.user_id = current_user.id
         @player.age = current_user.age
-        @player.category_id = Category.find_by_game_name(params[:game_name]).id
+        
+        @player.category_id = params[:category_id]
+        @player.team_queue = params[:team_queue]
         if @player.category.game_name == "lol"
-            game_id = current_user.usersgames.find_by_category_id(Category.find_by_game_name("lol")).user_nickname
+            game_id = current_user.usersgames.find_by_category_id(Category.find_by_game_name("lol").id).user_nickname
+            puts "---game_id----"
+            puts game_id
             url = URI.encode("https://kr.api.riotgames.com/lol/summoner/v3/summoners/by-name/#{game_id}?api_key=#{ENV["LOL_API_KEY"]}")
             user_lol_info = RestClient.get(url)
             user_lol_info = JSON.parse(user_lol_info)
@@ -63,8 +70,9 @@ class PlayersController < ApplicationController
         
         if @player.category.game_name == "pubg"
             # PubG opgg 점수 크롤링 
+            game_id = current_user.usersgames.find_by_category_id(Category.find_by_game_name("pubg").id).user_nickname
             mmrs = Array.new
-            url = "https://dak.gg/profile/" + current_user.pubg_id
+            url = "https://dak.gg/profile/" + game_id
             page = Nokogiri::HTML(open(url))
             solo_mmr = page.xpath('//*[@id="profile"]/div[3]/div[1]/section[1]/div[1]/div[1]/div[2]/span[1]').text.tr(',','').to_i
             duo_mmr = page.xpath('//*[@id="profile"]/div[3]/div[1]/section[2]/div[1]/div[1]/div[2]/span[1]').text.tr(',','').to_i
@@ -81,27 +89,124 @@ class PlayersController < ApplicationController
         end
         
         if @player.category.game_name == "ow"
-            ow_id = current_user.ow_id.gsub!("#","-")
-        
+            game_id = current_user.usersgames.find_by_category_id(Category.find_by_game_name("ow").id).user_nickname
             # 오버와치 점수 가져오기
-            url = URI.encode("https://www.overbuff.com/players/pc/" + ow_id)
+            url = URI.encode("https://www.overbuff.com/players/pc/" + game_id)
             page = Nokogiri::HTML(open(url))
             mmr = page.css("span .player-skill-rating").text
     
             # 오버와치 포지션 가져오기
-            url = URI.encode("https://www.overbuff.com/players/pc/" + ow_id + "?mode=competitive")
+            url = URI.encode("https://www.overbuff.com/players/pc/" + game_id + "?mode=competitive")
             page = Nokogiri::HTML(open(url))
             pos = page.xpath("/html/body/div[1]/div[3]/div/div[3]/div[2]/div[2]/div/section/article/table/tbody/tr[1]/td[1]/a/img").attr("alt")
             @player.game_data = {mmr: mmr, pos1: pos}
         end
         
+        puts "create-------------------set"
         @player.save
+    end
+    
+    def queue
+        player = Player.find_by_user_id(current_user.id)
+        if player.team_queue
+            
+            # Matching for team LOL
+            if player.category_id == 1 
+                team = [player]
+                roles = [player.game_data[:pos1]]
+                Player.where.not(user_id: player.user_id).where(category_id: Category.find_by_game_name("lol")).all.each do |other_player|
+                    if (player.age - other_player.age).abs < 3 && other_player.category.game_name == "lol" && (player.game_data[:mmr].to_i - other_player.game_data[:mmr].to_i).abs < 200 && roles.exclude?(other_player.game_data[:pos1])
+                            roles.push(other_player.game_data[:mmr])
+                            team.push(other_player)
+                    end
+                    
+                    if team.length == 5
+                        channel_members = Array.new
+                        team.each do |member|
+                            channel_members.push(member.user.username)
+                        end
+                        team.each do |member|
+                            matched_user = User.find(member.user_id)
+                            Pusher.trigger("user_#{matched_user.id}", 'match', channel_members.as_json)
+                        end
+                    end
+                end
+            end
+            
+            # Matching for team PUBG
+            if player.category_id == 3
+                team = [player]
+                Player.where.not(user_id: player.user_id).where(category_id: Category.find_by_game_name("pubg")).all.each do |other_player|
+                    if (player.age - other_player.age).abs < 3 && other_player.category.game_name == "pubg" && (player.game_data[:mmr].to_i - other_player.game_data[:mmr].to_i).abs < 500 && team.length < 4
+                        team.push(other_player)
+                    end
+                    if team.length == 4
+                        channel_members = Array.new
+                        team.each do |member|
+                            channel_members.push(member.user.username)
+                        end
+                        team.each do |member|
+                            matched_user = User.find(member.user_id)
+                            Pusher.trigger("user_#{matched_user.id}", 'match', channel_members.as_json)
+                        end
+                    end
+                end
+            end
+            
+            if player.category_id == 2
+                team = [player]
+                roles = [player.game_data[:pos1]]
+                Player.where.not(user_id: player.user_id).where(category_id: Category.find_by_game_name("ow")).all.each do |other_player|
+                    if (player.age - other_player.age).abs < 3 && other_player.category.game_name == "ow" && (player.game_data[:mmr].to_i - other_player.game_data[:mmr].to_i).abs < 200 && roles.exclude?(other_player.game_data[:pos1])
+                            roles.push(other_player.game_data[:mmr])
+                            team.push(other_player)
+                    end
+                    if team.length == 4
+                        channel_members = Array.new
+                        team.each do |member|
+                            channel_members.push(member.user.username)
+                        end
+                        team.each do |member|
+                            matched_user = User.find(member.user_id)
+                            Pusher.trigger("user_#{matched_user.id}", 'match', channel_members.as_json)
+                        end
+                    end
+                end
+            end
+        else
+            # 듀오 매칭 잡아주기
+            duo = [player]
+            Player.where.not(user_id: player.user.id).where(category_id: player.category.id).all.each do |other_player|
+                if (player.age - other_player.age).abs > 3
+                    next
+                end
+                if (player.game_data[:mmr] - other_player.game_data[:mmr]).abs > 250
+                    next
+                end
+                duo.push(other_player)
+                break
+            end
+            if duo.length == 2
+                channel_members = Array.new
+                duo.each do |member|
+                    channel_members.push(member.user.username)
+                end
+                duo.each do |member|
+                    matched_user = User.find(member.user_id)
+                    Pusher.trigger("user_#{matched_user.id}", 'match', channel_members.as_json)
+                end
+            end
+        end
     end
     
     # 플레이어의 시간을 업데이트해줌
     def update
-        player = Player.find(current_user.id)
+        player = Player.find_by_user_id(current_user.id)
         player.touch unless player.nil?
+    end
+    
+    def destroy
+        Player.find_by_user_id(current_user.id).destroy
     end
     
     # 최근 업데이트 되지 않은 플레이어들은 다 삭제해 주기
@@ -109,101 +214,95 @@ class PlayersController < ApplicationController
         Player.where(updated_at: 30.seconds.ago..Time.now).destroy_all
     end
     
-    # 플레이어가 스쿼드 매칭을 찾는다고 변경해줌
-    def update_match_status
-        player = Player.find(current_user.id)
-        player.update({:team_queue => true})
-    end
-    
     # 플레이어들을 채팅방에 연결해줌
     def link_players
         room_name =  params[:team].join('')
-        puts room_name
+        player = Player.find_by_user_id(current_user.id)
         # 플레이어들 넣어줄 채팅방 만들기
         if ChatRoom.where(title: room_name).empty?
-            @chat_room = ChatRoom.create(title: room_name)
-            Player.find_by_user_id(current_user.id).destroy
+            @chat_room = ChatRoom.new(title: room_name)
+            @chat_room.category_id = player.category_id
+            @chat_room.save
             Admission.create(user_id: current_user.id, chat_room_id: @chat_room.id)
             Pusher.trigger("user_#{current_user.id}", 'link', {:id => @chat_room.id}.as_json )
         else
             chat_room = ChatRoom.find_by! title: room_name
-            # 플레이어 데이터 삭제
-            Player.find_by_user_id(current_user.id).destroy
             # 플레이어 어드미션 만들어주기
             Admission.create(user_id: current_user.id, chat_room_id: chat_room.id)
             # 채팅방으로 리다이렉트 해주기
             Pusher.trigger("user_#{current_user.id}", 'link', {:id => chat_room.id}.as_json )
         end
+        # 플레이어 정보 삭제
+        player.destroy
     end
     
-    # 2인 큐를 잡아주는 알고리즘
-    def duo_match
-        player = Player.find_by_user_id(current_user.id)
-        duo = [player]
-        Player.where.not(user_id: player.user.id).where(category_id: player.category.id).all.each do |other_player|
-            if (player.age - other_player.age).abs > 3
-                next
-            end
-            if (player.game_data[:mmr] - other_player.game_data[:mmr]).abs > 250
-                next
-            end
-            duo.push(other_player)
-            break
-        end
-        if duo.length == 2
-            channel_members = Array.new
-            duo.each do |member|
-                channel_members.push(member.user.username)
-            end
-            duo.each do |member|
-                matched_user = User.find(member.user_id)
-                Pusher.trigger("user_#{matched_user.id}", 'match', channel_members.as_json)
-            end
-        end
-    end
+    # # 2인 큐를 잡아주는 알고리즘
+    # def duo_match
+    #     player = Player.find_by_user_id(current_user.id)
+    #     duo = [player]
+    #     Player.where.not(user_id: player.user.id).where(category_id: player.category.id).all.each do |other_player|
+    #         if (player.age - other_player.age).abs > 3
+    #             next
+    #         end
+    #         if (player.game_data[:mmr] - other_player.game_data[:mmr]).abs > 250
+    #             next
+    #         end
+    #         duo.push(other_player)
+    #         break
+    #     end
+    #     if duo.length == 2
+    #         channel_members = Array.new
+    #         duo.each do |member|
+    #             channel_members.push(member.user.username)
+    #         end
+    #         duo.each do |member|
+    #             matched_user = User.find(member.user_id)
+    #             Pusher.trigger("user_#{matched_user.id}", 'match', channel_members.as_json)
+    #         end
+    #     end
+    # end
     
-    # 롤 5인큐를 잡아주는 알고리즘
-    def team_match_lol
-        player = Player.find(current_user.id)
-        team = [player]
-        roles = [player.game_data[:pos1]]
-        Player.where.not(user_id: player.user_id).where(category_id: Category.find_by_game_name("lol")).all.each do |other_player|
-            if (player.age - other_player.age).abs < 3 && other_player.category.game_name == "lol" && (player.game_data[:mmr].to_i - other_player.game_data[:mmr].to_i).abs < 200 && roles.exclude?(other_player.game_data[:pos1])
-                    roles.push(other_player.game_data[:mmr])
-                    team.push(other_player)
-            end
-        end
-        if team.length == 5
-            channel_members = Array.new
-            team.each do |member|
-                channel_members.push(member.user.username)
-            end
-            team.each do |member|
-                matched_user = User.find(member.user_id)
-                Pusher.trigger("user_#{matched_user.id}", 'match', channel_members.as_json)
-            end
-        end
-    end
+    # # 롤 5인큐를 잡아주는 알고리즘
+    # def team_match_lol
+    #     player = Player.find(current_user.id)
+    #     team = [player]
+    #     roles = [player.game_data[:pos1]]
+    #     Player.where.not(user_id: player.user_id).where(category_id: Category.find_by_game_name("lol")).all.each do |other_player|
+    #         if (player.age - other_player.age).abs < 3 && other_player.category.game_name == "lol" && (player.game_data[:mmr].to_i - other_player.game_data[:mmr].to_i).abs < 200 && roles.exclude?(other_player.game_data[:pos1])
+    #                 roles.push(other_player.game_data[:mmr])
+    #                 team.push(other_player)
+    #         end
+    #     end
+    #     if team.length == 5
+    #         channel_members = Array.new
+    #         team.each do |member|
+    #             channel_members.push(member.user.username)
+    #         end
+    #         team.each do |member|
+    #             matched_user = User.find(member.user_id)
+    #             Pusher.trigger("user_#{matched_user.id}", 'match', channel_members.as_json)
+    #         end
+    #     end
+    # end
     
     # 배그 4인큐를 잡아주는 알고리즘
-    def team_match_pubg
-        player = Player.find(current_user.id)
-        team = [player]
-        Player.where(category_id: Category.find_by_game_name("pubg")).all.each do |other_player|
-            if (player.age - other_player.age).abs < 3 && other_player.category.game_name == "pubg" && (player.game_data[:mmr].to_i - other_player.game_data[:mmr].to_i).abs < 200 && team.length < 4
-                team.push(other_player)
-            end
-        end
-        if team.length == 4
-            channel_members = Array.new
-            team.each do |member|
-                channel_members.push(member.user.username)
-            end
-            team.each do |member|
-                matched_user = User.find(member.user_id)
-                Pusher.trigger("user_#{matched_user.id}", 'match', channel_members.as_json)
-            end
-        end
-    end
-    
+    # def team_match_pubg
+    #     player = Player.find(current_user.id)
+    #     team = [player]
+    #     Player.where(category_id: Category.find_by_game_name("pubg")).all.each do |other_player|
+    #         if (player.age - other_player.age).abs < 3 && other_player.category.game_name == "pubg" && (player.game_data[:mmr].to_i - other_player.game_data[:mmr].to_i).abs < 200 && team.length < 4
+    #             team.push(other_player)
+    #         end
+    #     end
+    #     if team.length == 4
+    #         channel_members = Array.new
+    #         team.each do |member|
+    #             channel_members.push(member.user.username)
+    #         end
+    #         team.each do |member|
+    #             matched_user = User.find(member.user_id)
+    #             Pusher.trigger("user_#{matched_user.id}", 'match', channel_members.as_json)
+    #         end
+    #     end
+    # end
 end

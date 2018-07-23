@@ -1,10 +1,11 @@
 <br><br><br><br>
+
 <div class="w-100 pl-3 d-flex justify-content-start row"  style="position: absolute; height: 82%; ">
     
     <!--채팅-->
     <div class="h-100 p-1 m-2 col-md-5 col-sm-12 col-xs-12">
         <div class="card-box p-2 h-100 " data-spy="scroll" data-target="#chat_list_id" data-offset="0">
-            <div class="form-control scroll-chat" style="height: 90%; overflow-x: hidden;overflow-y: auto;">
+            <div class="form-control scroll-chat" style="height: 90%; overflow-x: hidden; overflow-y: auto;">
                 <div class=" d-flex flex-column chat_list " style="">
                     
                     <% if @chat_room.users.include?(current_user) %>
@@ -68,7 +69,7 @@
             <%= form_tag("/chat_rooms/#{@chat_room.id}/chat", class: "d-flex mt-2", style: "height: 8%", remote: true) do %>
                 <input id="imessage" type="text" name="message" class="h-100 mr-2 p-2 form-control " style="width: 90%;"></input>
                 <button class="h-100 btn btn-primary text-center d-flex justify-content-center" type = "submit" style="width: 10%">
-                    <i class="fa fa-send" style="font-size: 20px;"></i>
+                    <i class="fa fa-commenting" style="font-size: 35px;"></i>
                 </button>
             <% end %>
         </div>
@@ -77,33 +78,30 @@
     
     <!--참여 유저-->
     <div class="h-100 p-1 m-2 col-md-4 col-sm-12 col-xs-12" >
-        <div class="card-box p-2 h-100">
-            <h4 class="text-center">UserList</h4>
+        <div class="card-box p-2 h-100 d-flex flex-column">
+            <h4 class="text-center"><i class="mdi mdi-account-multiple-outline"></i> UserList</h4>
             <hr>
             <ul class="list-group m-b-0 user-list joined_user_list">
-                <% @chat_room.users.each do |user| %>
-                <li class="list-group-item userli user-<%= user.id %>">
+                <% @user_data.each do |user| %>
+                <li class="list-group-item userli user-<%= user[:username] %>">
                     <div class="user-list-item">
                         <div class="avatar">
-                            <img src="<%= user.avatar.thumb%>" alt="">
+                            <img src="<%= user[:avatar]%>" alt="">
                         </div>
                         <div class="user-desc">
-                            <span class="name"><%= user.username %></span>
+                            <span class="name"><%= user[:username] %></span>
+                            <% user[:gameinfo].each do |k, v|%>
+                            <srong><%=k%>: &nbsp</srong><span><%=v%></span> &nbsp&nbsp
+                            <br>
+                            <% end %>
                         </div>
                     </div>
                 </li>    
                 <% end %>
             </ul>
+            <%= link_to '나가기', exit_chat_room_path(@chat_room),
+                class: "btn btn-warning mt-auto waves-effect waves-light", method: 'DELETE', remote: true, data: {confirm: "방을 나가시겠습니까??"} %>
         </div>
-        <% if @chat_room.users.exclude?(current_user) %>
-            <!-- the condition "remote:true" automatically becomes AJAX -->
-            <span class="join_room">
-            <%= link_to 'Join', join_chat_room_path(@chat_room), method: 'post', remote: true %> |
-            </span>
-        <% else %>
-            <%= link_to 'Delete', chat_room_path(@chat_room), method: 'DELETE', data: {confirm: "방을 삭제?"} %> |
-            <%= link_to 'Exit', exit_chat_room_path(@chat_room), method: 'DELETE', remote: true, data: {confirm: "방을 나가기?"} %> |
-        <% end %>
     </div>
 </div>
 
@@ -115,10 +113,8 @@
 <script>
 $(document).on('ready',function(){
     $(".scroll-chat").scrollTop($(".scroll-chat")[0].scrollHeight);
-    $('.userli').popover({title: `<p class="text-purple m-0">상세보기</p>`, 
-    content: `  <h5 class="text-primary"><span>Info00</span> - <span>Value</span></h5>
-                <h5 class="text-primary"><span>Info01</span> - <span>Value</span></h5>`, 
-    html: true, placement: "bottom"}); 
+
+    
     
     function user_joined(data) {
         $('.joined_user_list').append(`
@@ -142,7 +138,7 @@ $(document).on('ready',function(){
         console.log("이전 아이디-"+String(preuserid))
         console.log("현재 아이디-"+data.user_id)
         
-        $('#imessage')[0].value = ""
+        
         
         if( data.user_id == "<%=current_user.id%>"){
             //본인이 말할 때
@@ -217,6 +213,7 @@ $(document).on('ready',function(){
 	// This is different from the index channel because it only applies to user who are currently in the room
     var channel = pusher.subscribe('chat_room_<%= @chat_room.id %>');
     channel.bind('join', function(data) {
+        console.log("join event")
         console.log(data);
         user_joined(data);
     });

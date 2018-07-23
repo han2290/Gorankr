@@ -3,19 +3,6 @@
     <!-- Page-Title -->
     <div class="row">
         <div class="col-sm-12">
-            <div class="btn-group pull-right m-t-20">
-                <button type="button" class="btn btn-custom dropdown-toggle waves-effect waves-light" data-toggle="dropdown" aria-expanded="false">Settings </button>
-                <div class="dropdown-menu dropdown-menu-right">
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item">Action</a>
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item">Another action</a>
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item">Something else</a>
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item">Separated link</a>
-                </div>
-            </div>
             <h4 class="page-title">게시판 보드</h4>
         </div>
     </div>
@@ -32,7 +19,7 @@
                       <% 
                       img = Nokogiri::HTML(post.content).xpath('//img')
                       if img[0].nil?
-                        src = ""
+                        src = "/images/fallback/default_post.png"
                       else
                         src = img.xpath('//img').first.attr('src')
                       end 
@@ -46,10 +33,10 @@
                           <h5 class = "m-0"><a class="text-light" href="/boards/<%=@game_name%>/<%= post.id %>"><strong><%= post.title %></strong></a></h5>
                         </div>
                         <div class= "p-0 " >
-                          <small ><%= post.category.game_name%></small>
+                          <small ><%= post.category.game_full_name%></small>
                         </div>
                         <div class= "p-0 " >
-                          <small><%= post.created_at.strftime("%Y-%m-%d %H:%M") %>/<%=post.username %>/<%=post.likes.size%></small>
+                          <small><%= post.format_time %>/<%=post.username %>/<%=post.likes.size%></small>
                         </div>
                       </div>
                     </div>
@@ -57,8 +44,15 @@
                   </li>
                 <% end %>
               </ul>
-              <a class="text-light" href="/boards/<%=@game_name%>/new"> 글쓰기</a>
+              <div class="d-flex justify-content-between">
+              <div><%= paginate @posts, theme: 'twitter-bootstrap-4'%></div>
+              
+              <a class="btn btn-primary btn-bordred waves-effect w-md waves-light m-b-5" href="/boards/<%=@game_name%>/new" style="font-size: 20px;"> 글쓰기</a>
+              </div>
+              
             </div> <!-- end card-box -->
+            
+            
         </div>
         <!-- end col -->
     </div>

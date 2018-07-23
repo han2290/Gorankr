@@ -52,25 +52,24 @@ Rails.application.routes.draw do
   get '/fetch/:category' => 'mypages#fetch_data'
   
   # Queue matching routes
-  post '/players' => 'players#create'
+  
   patch '/players/update' => 'players#update'
-  post '/queue/lol_duo' => 'players#duo_match'
-  post '/queue/lol_squad' => 'players#team_match_lol'
-  post '/queue/pubg_duo' => 'players#duo_match'
-  post '/queue/pubg_squad' => 'players#team_match_pubg'
-  post '/queue/ow_duo' => 'players#duo_match'
+  post '/queue/create' => 'players#create'
+  delete '/queue/delete' => 'players#destroy'
+  # post '/queue/lol_duo' => 'players#duo_match'
+  # post '/queue/lol_squad' => 'players#team_match_lol'
+  # post '/queue/pubg_duo' => 'players#duo_match'
+  # post '/queue/pubg_squad' => 'players#team_match_pubg'
+  # post '/queue/ow_duo' => 'players#duo_match'
   post '/queue/link' => 'players#link_players'
   
   # Pusher authentication for presence channel
   post '/pusher/auth' => 'pusher#auth'
 
-  
-  
   # test
   get '/users'                    =>  'home#users'
-  
+  get '/loading'                  =>  'home#load'
   patch '/users/:id/image'    => 'home#imgupdate'
-  
   
    
 end

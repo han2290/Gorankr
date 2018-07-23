@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>TempApp</title>
+    
+
+    <title>Gorankr</title>
     <%= csrf_meta_tags %>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="shortcut icon" type="image/x-icon" href="/icon/favicon.png" />
     
     <%= stylesheet_link_tag    'application', media: 'all' %>
     <%= stylesheet_link_tag    params[:controller], media: 'all' %>
@@ -15,7 +19,7 @@
   <body>
     <div id="wrapper">
       <%= render 'shared/topbar' %>
-      <%= render 'shared/leftsidemenu' %>
+      <%= render 'shared/leftsidemenu' if user_signed_in? %>
       
       <div class="content-page">
         <%= yield %>
@@ -28,4 +32,7 @@
     
     <%= yield 'javascript_content' %>
   </body>
+  
+  
+  <footer class="footer text-right">Made with <i class="mdi mdi-heart-pulse"></i> by ApVision</footer>
 </html>

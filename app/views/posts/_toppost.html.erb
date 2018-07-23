@@ -1,14 +1,19 @@
 <div class="card-box">
 
+<h4 class="header-title m-t-0 m-b-10">베스트 인기 글</h4>
 
-<h4 class="header-title m-t-0 m-b-30">베스트 인기 글</h4>
-
-<% Post.order('posts.impressions_count DESC').limit(4).each do |best| %>
+<% Post.order('posts.impressions_count DESC').limit(5).each do |best| %>
     <ul class="list-group m-b-0 user-list">
         <li class="list-group-item">
-            <a href="#" class="user-list-item">
+            <a href="/boards/<%=best.category.game_name%>/<%=best.id%>" class="user-list-item">
                 <div class="comment">
-                    <img src="https://www.bloter.net/wp-content/uploads/2017/06/%EA%B5%AC%EA%B8%80-765x430.png" alt="" class="comment-avatar">
+                    <% img = Nokogiri::HTML(best.content).xpath('//img') %>
+                    <% if img[0].nil? %>
+                       <% src = "/images/fallback/default_post.png" %>
+                    <% else %>
+                        <% src = img.xpath('//img').first.attr('src') %>
+                    <% end %>
+                    <img src="<%= src %>" alt="" class="comment-avatar">
                 </div>
                 <div class="user-desc">
                     <span class="name"><%= best.title %></span>

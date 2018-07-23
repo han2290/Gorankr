@@ -1,0 +1,132 @@
+<h2>너 내 동료가 되어라!</h2>
+<hr/>
+<%= form_tag('/players', method: "POST", remote: true) do %>
+    <%= select_tag "game_name", 
+    "<option value='lol'>리그오브레전드</option>
+     <option value='pubg'>배틀그라운드</option>
+     <option value='ow'>오버워치</option>".html_safe %>
+    <%= submit_tag "게임 설정" , class: "btn btn-primary" %>
+<% end %>
+
+<div class="match_type"></div>
+
+<br/><br/>
+<h2>In Queue</h2>
+<hr>
+<table border="2">
+    <tr>
+        <th>User Name</th>
+        <th>Age</th>
+        <th>Game Name</th>
+        <th>Game Data</th>
+        <th>Update</th>
+    </tr>
+    <% @players.each do |player| %>
+    <tr>
+        <td><%= player.user_id %></td>
+        <td><%= player.age %></td>
+        <td><%= player.category.game_name %></td>
+        <td><%= player.game_data %></td>
+        <td><%= player.updated_at %></td>
+    </tr>
+    <% end %>
+</table>
+
+<script>
+$(document).on('ready', function() {
+    
+    // Check online status of a player and updates the connection time
+    // setInterval(function () {
+    //     console.log("Updating player time");
+    //     $.ajax({
+    //         url: "/players/update",
+    //         method: "PATCH",
+    //     });
+    // }, 5000);
+    
+    var pusher = new Pusher('<%= ENV["PUSHER_KEY"]%>', {
+        cluster: "<%= ENV["PUSHER_CLUSTER"]%>",
+        encrypted: true,
+        auth: {
+            headers: {
+            'X-CSRF-Token': "<%= form_authenticity_token %>"
+            }
+        }
+    });
+
+    var channel = pusher.subscribe('user_<%= current_user.id %>');
+        
+    channel.bind('match', function(data) {
+        console.log(data);
+        if (confirm("찾았습니다! 수락하시겠습니까?")) {
+            console.log(data.join(''));
+            
+            var accept_channel = pusher.subscribe('presence-' + data.join(''));
+            accept_channel.bind('pusher:member_added', function(member) {
+                console.log("Accept count at " + accept_channel.members.count);
+            });
+            
+            setTimeout(function() {
+                console.log(accept_channel.members.count);
+                if (accept_channel.members.count == data.length) {
+                    console.log("ajax to link")
+                    $.ajax({
+                        url: "/queue/link",
+                        method: "POST",
+                        data: {
+                            team: data,
+                        }
+                    });
+                } else {
+                    console.log("Not all accepted")
+                }
+            }, 12000);
+        } else {
+            alert("매칭 거절");
+            location.reload();
+        }
+    });
+    
+    channel.bind('link', function(data) {
+        console.log("Now linking");
+        location.href = `/chat_rooms/${data["id"]}` 
+    })
+});
+
+$(document).on('click', '.lol_duo', function() {
+    $.ajax({
+        url: "/queue/lol_duo",
+        method: "POST",
+    });
+});
+$(document).on('click', '.lol_squad', function() {
+    $.ajax({
+        url: "/queue/lol_squad",
+        method: "POST",
+    });
+});
+$(document).on('click', '.pubg_duo', function() {
+    $.ajax({
+        url: "/queue/pubg_duo",
+        method: "POST",
+    });
+});
+$(document).on('click', '.pubg_squad', function() {
+    $.ajax({
+        url: "/queue/pubg_squad",
+        method: "POST",
+    });
+});
+$(document).on('click', '.ow_duo', function() {
+    $.ajax({
+        url: "/queue/pw_duo",
+        method: "POST",
+    });
+});
+$(document).on('click', '.btn-dark', function() {
+    setTimeout(function() {
+        alert("현재 비슷한 플레이어를 찾을 수 없습니다")
+    }, 30000);
+});
+
+</script>

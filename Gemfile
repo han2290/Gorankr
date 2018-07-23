@@ -67,6 +67,10 @@ gem 'pusher'
 # impressions
 gem 'impressionist'
 
+# 페이지네이션
+gem 'kaminari'
+gem 'bootstrap4-kaminari-views'
+
 group :development, :test do
   gem 'rails_db'
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

@@ -1,19 +1,29 @@
-<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+<div id="carouselExampleIndicators" class="carousel slide" 
+ data-pause="true">
   <ol class="carousel-indicators">
-    <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-    <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-    <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+    <% 
+      act = "active"
+      i = 0
+      @games.size.times do%>
+    <li data-target="#carouselExampleIndicators" data-slide-to="<%= i %>" class="<%= act %>"></li>
+    
+    <!--<li data-target="#carouselExampleIndicators" data-slide-to="1"></li>-->
+    <!--<li data-target="#carouselExampleIndicators" data-slide-to="2"></li>-->
+    <% i = i + 1
+      act = ""
+    end %>
   </ol>
     <div class="carousel-inner">
-      <div class="carousel-item active">
-        <img class="d-block w-100" src="http://upload.inven.co.kr/upload/2014/06/23/bbs/i0976030867.png" alt="First slide">
+      <% option = "active"
+      @games.each do |game|
+      %>
+      <div class="carousel-item <%= option%> " data-game="<%=game.category.game_name%>" data-fullname="<%=game.category.game_full_name%>"
+      data-category = "<%=game.category.id%>">
+        <img class="d-block w-100" src="<%=game.category.image_path%>" alt="First slide">
       </div>
-      <div class="carousel-item">
-        <img class="d-block w-100" src="http://static.inven.co.kr/column/2014/11/09/news/i1845466722.jpg" alt="Second slide">
-      </div>
-      <div class="carousel-item">
-        <img class="d-block w-100" src="https://img.huffingtonpost.com/asset/5ae70d6a1e000043008e401a.jpeg?cache=dQX1HnCXxG&ops=scalefit_630_noupscale" alt="Third slide">
-      </div>
+     <% option = ""
+     end 
+     %>
     </div>
     <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
       <span class="carousel-control-prev-icon" aria-hidden="true"></span>

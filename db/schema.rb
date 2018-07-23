@@ -24,6 +24,7 @@ ActiveRecord::Schema.define(version: 20180721022023) do
   create_table "categories", force: :cascade do |t|
     t.string   "game_name"
     t.string   "game_full_name"
+    t.string   "image_path"
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
   end
@@ -31,6 +32,7 @@ ActiveRecord::Schema.define(version: 20180721022023) do
   create_table "chat_rooms", force: :cascade do |t|
     t.string   "title"
     t.integer  "admissions_count", default: 0
+    t.integer  "category_id"
     t.datetime "created_at",                   null: false
     t.datetime "updated_at",                   null: false
   end

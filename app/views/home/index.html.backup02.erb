@@ -1,0 +1,368 @@
+
+<!-- Start content -->
+<div class="content">
+    
+  <div class="container-fluid">
+    <div class="row">
+        
+      <!---->
+        <div class="d-flex align-items-center justify-content-center flex-column " 
+        style="height: 85%; width: 81%; position: absolute;" >
+            <div id="load" class=" " >
+                <div class="d-flex align-items-center flex-column justify-content-center" style="height: 100%; width: 100%;" >
+                    <img src="/images/loading/loading.gif" alt="loading"></img>
+                    <p class="text-primary"> 플레이어를 찾는 중입니다.</p>
+                </div>
+            </div>
+            
+    		 <div class="card-box">
+    		  <div style="height: 60%;">
+    		    <%= render 'shared/cardlist' %>
+    		  </div>
+    		  <div class="w-100 d-flex flex-column " style="height: 40%;">
+    		      <br>
+    		  <% unless @games.size < 1%>
+    		    <div class="h-75">
+    		      <h4 class="game-title"><%= @firstgmae.category.game_full_name %></h4>
+    		      <p >현재 <%= Player.where(category_id: 1).count %> 명이 이 게임에서 팀원을 찾는 중입니다.</p>
+    		    </div>
+    		    
+    		    <div class="d-flex h-25 align-items-end justify-content-end">
+    		      <div class="match_type"></div>
+    		      &nbsp&nbsp
+    		      
+    		      <button onclick="isloading.start()" class="btn btn-dark queduo  <%= @firstgmae.category.game_name%>_duo"
+    		        data-category="<%=@firstgmae.category.id%>">Duo</button>
+    		        
+    		      <button onclick="isloading.start()" class="btn btn-dark quesquad <%= @firstgmae.category.game_name%>_squad"
+    		        data-category="<%=@firstgmae.category.id%>">Squad</button>
+    		      
+    		      <!--<a href="#" class="game-href popp badge badge-light align-items-center"-->
+    		      <!--  data-gamename="<#%= @firstgmae.category.game_name %>"-->
+    		      <!--  data-container="body" data-trigger="hover" data-placement="top" -->
+    		      <!--  data-content="당신의 팀원을 찾아드립니다." id="showtoast" >-->
+    		      <!--  <i class="ti-game text-primary" style="font-size: 40px;"></i>-->
+    		      <!--</a>-->
+    		      <!--<a href="/players/<#%=@firstgmae.category.game_name%>" class="game-href popp badge badge-light align-items-center"-->
+    		      <!-- data-method="post" data-remote="true"-->
+    		      <!--  data-container="body" data-trigger="hover" data-placement="top" -->
+    		      <!--  data-content="당신의 팀원을 찾아드립니다." id="showtoast" >-->
+    		      <!--  <i class="ti-game text-primary" style="font-size: 40px;"></i>-->
+    		      <!--</a>-->
+    		      
+    		    </div>
+    		   <% else %>
+    		       <div class="h-75">
+    		      <h4 class="game-title">게임을 연동해 주세요</h4>
+    		    </div>
+    		    <% end %>
+    		    <br>
+    		  </div>
+             </div>
+        </div><!-- end col -->
+      
+    </div>
+  </div> <!-- container -->
+</div> <!-- content -->
+
+
+<!-- Javascript contents -->
+<% content_for 'javascript_content' do %>
+<%= javascript_include_tag params[:controller] %>
+<script>
+ $('#load').hide();
+$('.popp').popover();
+$('#carouselExampleIndicators').on('slid.bs.carousel', function () {
+  var game = $('.carousel-item.active').attr('data-game')
+  var gamename = $('.carousel-item.active').attr('data-fullname')
+  var category = $('.carousel-item.active').attr('data-category')
+  console.log(gamename);
+  $('.game-title').text(gamename);
+//   $('.game-href').attr('data-gamename',`${game}`)
+  $('.queduo').attr('class',`btn btn-dark queduo  ${game}_duo`);
+  $('.queduo').attr('data-category',`${category}`);
+  $('.quesquad').attr('data-category',`${category}`);
+  
+  
+})
+
+$(document).on('ready', function() {
+   
+    
+    $('.game-href').on('click', function(){
+        var game = $('.game-href').attr('data-gamename')
+        console.log(game)
+        if(game == "lol"){
+            $('.match_type').html('<button class="btn btn-dark  lol_duo">Duo</button> &nbsp;<button class="btn btn-dark lol_squad">Squad</button>')
+        } else if(game=="pubg"){
+            $('.match_type').html('<button class="btn btn-dark  pubg_duo">Duo</button>&nbsp;<button class="btn btn-dark pubg_squad">Squad</button>')
+        } else if(game=="ow"){
+            $('.match_type').html('<button class="btn btn-dark  ow_duo">Duo</button>&nbsp;<button class="btn btn-dark ow_squad">Squad</button>')
+        }
+    });
+    
+    
+ 
+    // Check online status of a player and updates the connection time
+    // setInterval(function () {
+    //     console.log("Updating player time");
+    //     $.ajax({
+    //         url: "/players/update",
+    //         method: "PATCH",
+    //     });
+    // }, 5000);
+    
+    var pusher = new Pusher('<%= ENV["PUSHER_KEY"]%>', {
+        cluster: "<%= ENV["PUSHER_CLUSTER"]%>",
+        encrypted: true,
+        auth: {
+            headers: {
+            'X-CSRF-Token': "<%= form_authenticity_token %>"
+            }
+        }
+    });
+
+    var channel = pusher.subscribe('user_<%= current_user.id %>');
+        
+    channel.bind('match', function(data) {
+        console.log(data);
+        if (confirm("찾았습니다! 수락하시겠습니까?")) {
+            console.log(data.join(''));
+            
+            var accept_channel = pusher.subscribe('presence-' + data.join(''));
+            accept_channel.bind('pusher:member_added', function(member) {
+                console.log("Accept count at " + accept_channel.members.count);
+            });
+            
+            setTimeout(function() {
+                console.log(accept_channel.members.count);
+                if (accept_channel.members.count == data.length) {
+                    console.log("ajax to link")
+                    $.ajax({
+                        url: "/queue/link",
+                        method: "POST",
+                        data: {
+                            team: data,
+                        }
+                    });
+                } else {
+                    console.log("Not all accepted")
+                }
+            }, 12000);
+        } else {
+            alert("매칭 거절");
+            location.reload();
+        }
+    });
+    
+    channel.bind('link', function(data) {
+        console.log("Now linking");
+        location.href = `/chat_rooms/${data["id"]}` 
+    })
+});
+
+$(document).on('click', '.lol_duo', function() {
+    $.ajax({
+        url: "/queue/create",
+        method: "POST",
+        data: {
+            category_id: $(this).attr('data-category'),
+            team_queue: false
+        }
+    });
+});
+$(document).on('click', '.lol_squad', function() {
+    $.ajax({
+        url: "/queue/create",
+        method: "POST",
+        data: {
+            game_name: $(this).attr('data-category'),
+            team_queue: true
+        }
+    });
+});
+$(document).on('click', '.pubg_duo', function() {
+    $.ajax({
+        url: "/queue/create",
+        method: "POST",
+        data: {
+            game_name: $(this).attr('data-category'),
+            team_queue: false
+        }
+    });
+});
+$(document).on('click', '.pubg_squad', function() {
+    $.ajax({
+        url: "/queue/create",
+        method: "POST",
+        data: {
+            game_name: $(this).attr('data-category'),
+            team_queue: true
+        }
+    });
+});
+$(document).on('click', '.ow_duo', function() {
+    $.ajax({
+        url: "/queue/create",
+        method: "POST",
+        data: {
+            game_name: $(this).attr('data-category'),
+            team_queue: false
+        }
+    });
+});
+
+$(document).on('click', '.btn-dark', function() {
+    setTimeout(function() {
+        alert("현재 비슷한 플레이어를 찾을 수 없습니다")
+        isloading.stop();
+    }, 30000);
+});
+
+$(function () {
+    var i = -1;
+    var toastCount = 0;
+    var $toastlast;
+
+    var getMessage = function () {
+        var msgs = ['My name is Inigo Montoya. You killed my father. Prepare to die!',
+            'Are you the six fingered man?',
+            'Inconceivable!',
+            'I do not think that means what you think it means.',
+            'Have fun storming the castle!'
+        ];
+        i++;
+        if (i === msgs.length) {
+            i = 0;
+        }
+
+        return msgs[i];
+    };
+
+    var getMessageWithClearButton = function (msg) {
+        msg = msg ? msg : 'Clear itself?';
+        msg += '<br /><br /><button type="button" class="btn btn-default clear">Yes</button>';
+        return msg;
+    };
+
+    $('.quebtn').click(function () {
+        var shortCutFunction = "info";
+        var msg = "팀원을 찾기 시작합니다.";
+        var title = $('#title').val() || '정보';
+        var $showDuration = "300";
+        var $hideDuration = "1000";
+        var $timeOut = 0;
+        var $extendedTimeOut = 0;
+        var $showEasing = "swing";
+        var $hideEasing = "linear";
+        var $showMethod = "fadeIn";
+        var $hideMethod = "fadeOut";
+        var toastIndex = toastCount++;
+        var addClear = $('#addClear').prop('checked');
+
+        toastr.options = {
+            closeButton: false,
+            debug: false,
+            newestOnTop: false,
+            progressBar: true,
+            positionClass: "toast-top-full-width",
+            preventDuplicates: false,
+            onclick: null
+        };
+
+        if ($('#addBehaviorOnToastClick').prop('checked')) {
+            toastr.options.onclick = function () {
+                alert('You can perform some custom action after a toast goes away');
+            };
+        }
+
+        if ($showDuration.length) {
+            toastr.options.showDuration = $showDuration;
+        }
+
+        if ($hideDuration.length) {
+            toastr.options.hideDuration = $hideDuration
+        }
+
+        if ($timeOut.length) {
+            toastr.options.timeOut = addClear ? 0 : $timeOut;
+        }
+
+        if ($extendedTimeOut.length) {
+            toastr.options.extendedTimeOut = addClear ? 0 : $extendedTimeOut;
+        }
+
+        if ($showEasing.length) {
+            toastr.options.showEasing = $showEasing;
+        }
+
+        if ($hideEasing.length) {
+            toastr.options.hideEasing = $hideEasing;
+        }
+
+        if ($showMethod.length) {
+            toastr.options.showMethod = $showMethod;
+        }
+
+        if ($hideMethod.length) {
+            toastr.options.hideMethod = $hideMethod;
+        }
+
+        if (addClear) {
+            msg = getMessageWithClearButton(msg);
+            toastr.options.tapToDismiss = false;
+        }
+        if (!msg) {
+            msg = getMessage();
+        }
+
+        $('#toastrOptions').text('Command: toastr["'
+                + shortCutFunction
+                + '"]("'
+                + msg
+                + (title ? '", "' + title : '')
+                + '")\n\ntoastr.options = '
+                + JSON.stringify(toastr.options, null, 2)
+        );
+
+        var $toast = toastr[shortCutFunction](msg, title); // Wire up an event handler to a button in the toast, if it exists
+        $toastlast = $toast;
+
+        if (typeof $toast === 'undefined') {
+            return;
+        }
+
+        if ($toast.find('#okBtn').length) {
+            $toast.delegate('#okBtn', 'click', function () {
+                alert('you clicked me. i was toast #' + toastIndex + '. goodbye!');
+                $toast.remove();
+            });
+        }
+        if ($toast.find('#surpriseBtn').length) {
+            $toast.delegate('#surpriseBtn', 'click', function () {
+                alert('Surprise! you clicked me. i was toast #' + toastIndex + '. You could perform an action here.');
+            });
+        }
+        if ($toast.find('.clear').length) {
+            $toast.delegate('.clear', 'click', function () {
+                toastr.clear($toast, {force: true});
+            });
+        }
+    });
+
+    function getLastToast() {
+        return $toastlast;
+    }
+
+    $('#clearlasttoast').click(function () {
+        toastr.clear(getLastToast());
+    });
+    $('#cleartoasts').click(function () {
+        toastr.clear();
+    });
+})
+
+</script>
+<% end %>
+
+
