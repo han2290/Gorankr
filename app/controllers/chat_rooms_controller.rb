@@ -11,7 +11,6 @@ class ChatRoomsController < ApplicationController
     # 메소드에 아이디와 카테고리를 넘겨 결과값을 반환받는다.
     # 그 값을 아이디와 병합하여 배열로 다시 만든다.
     
-    
   end
 
   # GET /chat_rooms/1
@@ -22,17 +21,13 @@ class ChatRoomsController < ApplicationController
     # 메소드에 아이디와 카테고리를 넘겨 결과값을 반환받는다.
     # 그 값을 아이디와 병합하여 배열로 다시 만든다.
     @user_data = []
-    puts "---------------show------------"
-    @chat_room.admissions.each do |admission|
-     
-      game_id = admission.user.usersgames.find_by_category_id(@chat_room.category_id).user_nickname
-      @user_data.push({username: admission.user.username, avatar: admission.user.avatar.thumb}.merge(gameinfo: fetch_data(@chat_room.category.game_name, game_id)))
-    end
-    puts "------------------------"
-    puts @user_data
-    puts "-------------------------"
-      
     
+    @chat_room.admissions.each do |admission|
+      game_id = admission.user.usersgames.find_by_category_id(@chat_room.category_id).user_nickname
+      @user_data.push({user_id: admission.user.id,username: admission.user.username, avatar: admission.user.avatar.thumb}.merge(gameinfo: fetch_data(@chat_room.category.game_name, game_id)))
+    end
+    
+      
   end
 
   # GET /chat_rooms/new
@@ -96,7 +91,7 @@ class ChatRoomsController < ApplicationController
     
     def fetch_pubg_data(game_id)
         # PubG opgg 점수 크롤링 
-        url = "https://dak.gg/profile/" + game_id
+        url = URI.encode("https://dak.gg/profile/" + game_id)
         page = Nokogiri::HTML(open(url))
         soloMMR = page.xpath('//*[@id="profile"]/div[3]/div[1]/section[1]/div[1]/div[1]/div[2]/span[1]').text
         duoMMR = page.xpath('//*[@id="profile"]/div[3]/div[1]/section[2]/div[1]/div[1]/div[2]/span[1]').text
@@ -193,8 +188,11 @@ class ChatRoomsController < ApplicationController
   # DELETE /chat_rooms/1.json
   def destroy
     @chat_room.user_exit_room(current_user)
+    @chat_room.chats.destroy_all
     @chat_room.admissions.destroy_all
     @chat_room.destroy
+    
+    
     
     redirect_to root_path
   end

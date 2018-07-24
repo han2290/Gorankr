@@ -8,7 +8,7 @@ class Admission < ApplicationRecord
     after_commit :user_exited_chat_room_notification, on: :destroy
     
     def user_joined_chat_room_notification
-        Pusher.trigger('chat_room', 'join', {chat_room_id: self.chat_room_id, user_name: self.user.username}.as_json)
+        Pusher.trigger("chat_room_#{chat_room_id}", 'join', {chat_room_id: self.chat_room_id, user_name: self.user.username}.as_json)
     end
     
     def user_exited_chat_room_notification

@@ -90,9 +90,10 @@
                 <% end %>
                 
                 <!--comment list-->
-                <div class="card-box">
+                
                     <!--comment01-->
                     <% @post.comments.reverse.each do |comment| %>
+                    <div class="card-box">
                     <div class="comment">
                         <img src="<%= comment.user.avatar.thumb %>" alt="" class="comment-avatar">
                         <div class="comment-body">
@@ -121,8 +122,9 @@
                             </div>
                         </div>
                     </div>
+                    </div>
                     <% end %>
-                </div>
+                
 
 
             </div>

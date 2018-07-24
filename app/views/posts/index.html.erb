@@ -3,7 +3,7 @@
     <!-- Page-Title -->
     <div class="row">
         <div class="col-sm-12">
-            <h4 class="page-title">게시판 보드</h4>
+            <h4 class="page-title"><%= Category.find_by_game_name(@game_name).game_full_name %> - 게시판</h4>
         </div>
     </div>
     <!-- end page title end breadcrumb -->

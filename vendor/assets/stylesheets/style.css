@@ -7,6 +7,7 @@ File: Core
 @import url(https://fonts.googleapis.com/css?family=Roboto:400,300,500,700);
 @import url(https://fonts.googleapis.com/css?family=Karla:400,700);
 @import url(https://fonts.googleapis.com/css?family=Rancho);
+@import url('https://fonts.googleapis.com/css?family=Montserrat');
 /*
 Template Name: UBold Dashboard
 Author: CoderThemes
@@ -5645,7 +5646,7 @@ File: Menu
 .logo {
   color: #188ae2 !important;
   font-size: 32px;
-  font-family: 'Rancho', cursive;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .logo i {

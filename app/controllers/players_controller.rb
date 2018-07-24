@@ -6,10 +6,7 @@ class PlayersController < ApplicationController
     # 큐에 들어갈 유저정보를 담아서 player 모델 데이터를 생성해준다
     def create
         Player.find_by_user_id(current_user.id).try(:destroy)
-        puts "-----------create------------"
-        puts params[:category_id]
-        puts params[:team_queue]
-            
+
         @player = Player.new
         @player.user_id = current_user.id
         @player.age = current_user.age
@@ -72,7 +69,7 @@ class PlayersController < ApplicationController
             # PubG opgg 점수 크롤링 
             game_id = current_user.usersgames.find_by_category_id(Category.find_by_game_name("pubg").id).user_nickname
             mmrs = Array.new
-            url = "https://dak.gg/profile/" + game_id
+            url = URI.encode("https://dak.gg/profile/" + game_id)
             page = Nokogiri::HTML(open(url))
             solo_mmr = page.xpath('//*[@id="profile"]/div[3]/div[1]/section[1]/div[1]/div[1]/div[2]/span[1]').text.tr(',','').to_i
             duo_mmr = page.xpath('//*[@id="profile"]/div[3]/div[1]/section[2]/div[1]/div[1]/div[2]/span[1]').text.tr(',','').to_i
@@ -224,13 +221,29 @@ class PlayersController < ApplicationController
             @chat_room.category_id = player.category_id
             @chat_room.save
             Admission.create(user_id: current_user.id, chat_room_id: @chat_room.id)
-            Pusher.trigger("user_#{current_user.id}", 'link', {:id => @chat_room.id}.as_json )
+            # sleep 2.2
+            # Pusher.trigger("user_#{current_user.id}", 'link', {:id => @chat_room.id}.as_json )
+            
+            
+            
+            puts "----------------------Create Room--------------------------"
+            # Pusher.trigger("chat_room_#{@chat_room.id}", 'reload', {})
         else
             chat_room = ChatRoom.find_by! title: room_name
             # 플레이어 어드미션 만들어주기
             Admission.create(user_id: current_user.id, chat_room_id: chat_room.id)
+            # sleep 2.2
+            # 여기다가 두 유저의 데이터를 보내는 건 어떤지?
             # 채팅방으로 리다이렉트 해주기
-            Pusher.trigger("user_#{current_user.id}", 'link', {:id => chat_room.id}.as_json )
+            
+            chat_room.admissions.each do |admission|
+                Pusher.trigger("user_#{admission.user_id}", 'link', {:id => chat_room.id}.as_json )
+            end
+            
+            
+            
+            # Pusher.trigger("user_#{current_user.id}", 'link', {:id => chat_room.id}.as_json )
+            puts "----------------------Join Room--------------------------"
         end
         # 플레이어 정보 삭제
         player.destroy

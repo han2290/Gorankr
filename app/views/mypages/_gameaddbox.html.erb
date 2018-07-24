@@ -4,7 +4,7 @@
                 </button>
                 <h4 class="custom-modal-title bg-primary">게임 연동</h4>
                 <div class="custom-modal-text text-left">
-                    <%= form_tag "/mypage/game", methd: :post do %>
+                    <%= form_tag "/mypage/game", methd: :post, remote: true do %>
                         
                         <div class="form-group">
                             <label for="game">Game</label>

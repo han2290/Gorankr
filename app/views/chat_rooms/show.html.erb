@@ -83,7 +83,7 @@
             <hr>
             <ul class="list-group m-b-0 user-list joined_user_list">
                 <% @user_data.each do |user| %>
-                <li class="list-group-item userli user-<%= user[:username] %>">
+                <li class="list-group-item userli user-<%= user[:user_id] %>">
                     <div class="user-list-item">
                         <div class="avatar">
                             <img src="<%= user[:avatar]%>" alt="">
@@ -114,9 +114,8 @@
 $(document).on('ready',function(){
     $(".scroll-chat").scrollTop($(".scroll-chat")[0].scrollHeight);
 
-    
-    
     function user_joined(data) {
+        console.log("FUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCK")
         $('.joined_user_list').append(`
         <li class="list-group-item user-${data.user_id}">
             <div class="user-list-item">
@@ -131,14 +130,13 @@ $(document).on('ready',function(){
         `)
         $('.chat_list').append(`<p>${data.user_name} entered this room</p>`);
     };
+    
     function user_chat(data) {
         console.log("--------")
         var preuserid = parseInt($('.chat-row').last().attr('data-id'))
         console.log("이미지 경로-"+data.user_avatar)
         console.log("이전 아이디-"+String(preuserid))
         console.log("현재 아이디-"+data.user_id)
-        
-        
         
         if( data.user_id == "<%=current_user.id%>"){
             //본인이 말할 때
@@ -199,7 +197,7 @@ $(document).on('ready',function(){
     };
     function user_exit(data) {
         $(`.user-${data.user_id}`).remove();
-        $('.chat_list').append(`<p>${data.user_name} exited this room</p>`);
+        $('.chat_list').append(`<p align="center">${data.user_name} 님이 나가셨습니다.</p>`);
     };
     function delete_room(data) {
         alert("Room has been deleted!");
@@ -210,14 +208,18 @@ $(document).on('ready',function(){
       cluster: "<%= ENV["PUSHER_CLUSTER"]%>",
       encrypted: true
     });
+    
+    console.log(pusher)
+    
 	// This is different from the index channel because it only applies to user who are currently in the room
     var channel = pusher.subscribe('chat_room_<%= @chat_room.id %>');
+    
     channel.bind('join', function(data) {
-        console.log("join event")
         console.log(data);
         user_joined(data);
     });
     channel.bind('chat', function(data) {
+        console.log('chat_room_<%= @chat_room.id %>')
         console.log(data);
         user_chat(data);
     });
@@ -225,6 +227,12 @@ $(document).on('ready',function(){
         console.log(data);
         user_exit(data);
     });
+    
+    channel.bind('reload', function(data){
+        console.log("reload")
+        alert("reload")
+        location.reload();
+    })
     
 })
 </script>
