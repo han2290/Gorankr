@@ -40,7 +40,7 @@
                                 <a href="/mypage/game/<%=game.id%>" data-method="delete" class="badge badge-light text-primary pull-right">X</a>
                                 <h4 class="mb-1"><%=game.category.game_full_name%> </h4>
                                 <div class="d-flex align-items-center">
-                                    <img class="thumb-sm rounded-circle"  src="<%= current_user.avatar.thumb %>" >
+                                    <img class="thumb-sm rounded-circle" src="/images/gameimg/<%=game.category.game_name%>_logo.png">
                                     <h4 class = "m-0 pl-2"><%=game.user_nickname%></h4>
                                     <a href="#gameviewbox" data-game="<%=game.category.game_name%>" data-animation="fadein" data-plugin="custommodal" data-overlayspeed="200" 
                                     data-overlaycolor="#36404a" class="ml-2 gameinfobtn">

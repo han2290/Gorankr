@@ -97,10 +97,12 @@ $(document).on('ready', function() {
         
     channel.bind('match', function(data) {
         console.log(data);
+        category_id = data["category"]
+        team = data["team"]
         if (confirm("찾았습니다! 수락하시겠습니까?")) {
-            console.log(data.join('_'));
+            console.log(team.join('_'));
             
-            var accept_channel = pusher.subscribe('presence-' + data.join('_'));
+            var accept_channel = pusher.subscribe('presence-' + team.join('_'));
             
             accept_channel.bind('pusher:member_added', function(member) {
                 console.log("Accept count at " + accept_channel.members.count);
@@ -110,13 +112,14 @@ $(document).on('ready', function() {
             
             setTimeout(function() {
                 console.log(accept_channel.members.count);
-                if (accept_channel.members.count == data.length) {
+                if (accept_channel.members.count == team.length) {
                     console.log("ajax to link")
                     $.ajax({
                         url: "/queue/link",
                         method: "POST",
                         data: {
-                            team: data,
+                            category: category_id,
+                            team: team,
                         }
                     });
                 } else {
@@ -126,7 +129,7 @@ $(document).on('ready', function() {
                         method: "DELETE"
                     })
                 }
-            }, 6500);
+            }, 6000);
         } else {
             alert("매칭을 거절하셨습니다.");
             $.ajax({
@@ -135,10 +138,7 @@ $(document).on('ready', function() {
             })
             location.reload();
         }
-        
         $('.loading-text')
-        
-        
     });
     
     channel.bind('link', function(data) {

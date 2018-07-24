@@ -81,24 +81,27 @@
         <div class="card-box p-2 h-100 d-flex flex-column">
             <h4 class="text-center"><i class="mdi mdi-account-multiple-outline"></i> UserList</h4>
             <hr>
-            <ul class="list-group m-b-0 user-list joined_user_list">
-                <% @user_data.each do |user| %>
-                <li class="list-group-item userli user-<%= user[:user_id] %>">
-                    <div class="user-list-item">
-                        <div class="avatar">
-                            <img src="<%= user[:avatar]%>" alt="">
+            <div style="height: 70%; overflow-x: hidden; overflow-y: auto;">
+                <ul class="list-group m-b-0 user-list joined_user_list">
+                    <% @user_data.each do |user| %>
+                    <li class="list-group-item userli user-<%= user[:user_id] %>">
+                        <div class="user-list-item">
+                            <div class="avatar">
+                                <img src="<%= user[:avatar]%>" alt="">
+                            </div>
+                            <div class="user-desc">
+                                <span class="name"><%= user[:username] %></span>
+                                <% user[:gameinfo].each do |k, v|%>
+                                <srong><%=k%>: &nbsp</srong><span><%=v%></span> &nbsp&nbsp
+                                <br>
+                                <% end %>
+                            </div>
                         </div>
-                        <div class="user-desc">
-                            <span class="name"><%= user[:username] %></span>
-                            <% user[:gameinfo].each do |k, v|%>
-                            <srong><%=k%>: &nbsp</srong><span><%=v%></span> &nbsp&nbsp
-                            <br>
-                            <% end %>
-                        </div>
-                    </div>
-                </li>    
-                <% end %>
-            </ul>
+                    </li>    
+                    <% end %>
+                </ul>
+            </div>
+            
             <%= link_to '나가기', exit_chat_room_path(@chat_room),
                 class: "btn btn-warning mt-auto waves-effect waves-light", method: 'DELETE', remote: true, data: {confirm: "방을 나가시겠습니까??"} %>
         </div>
@@ -115,7 +118,6 @@ $(document).on('ready',function(){
     $(".scroll-chat").scrollTop($(".scroll-chat")[0].scrollHeight);
 
     function user_joined(data) {
-        console.log("FUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCK")
         $('.joined_user_list').append(`
         <li class="list-group-item user-${data.user_id}">
             <div class="user-list-item">

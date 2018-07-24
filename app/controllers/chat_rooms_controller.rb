@@ -27,7 +27,6 @@ class ChatRoomsController < ApplicationController
       @user_data.push({user_id: admission.user.id,username: admission.user.username, avatar: admission.user.avatar.thumb}.merge(gameinfo: fetch_data(@chat_room.category.game_name, game_id)))
     end
     
-      
   end
 
   # GET /chat_rooms/new

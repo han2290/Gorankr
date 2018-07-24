@@ -105,8 +105,8 @@ class PlayersController < ApplicationController
     
     def queue
         player = Player.find_by_user_id(current_user.id)
+        category = player.category_id
         if player.team_queue
-            
             # Matching for team LOL
             if player.category_id == 1 
                 team = [player]
@@ -124,7 +124,8 @@ class PlayersController < ApplicationController
                         end
                         team.each do |member|
                             matched_user = User.find(member.user_id)
-                            Pusher.trigger("user_#{matched_user.id}", 'match', channel_members.as_json)
+                            member.destroy
+                            Pusher.trigger("user_#{matched_user.id}", 'match', {category: category, team: channel_members}.as_json)
                         end
                     end
                 end
@@ -144,7 +145,8 @@ class PlayersController < ApplicationController
                         end
                         team.each do |member|
                             matched_user = User.find(member.user_id)
-                            Pusher.trigger("user_#{matched_user.id}", 'match', channel_members.as_json)
+                            member.destroy
+                            Pusher.trigger("user_#{matched_user.id}", 'match', {category: category, team: channel_members}.as_json)
                         end
                     end
                 end
@@ -165,7 +167,8 @@ class PlayersController < ApplicationController
                         end
                         team.each do |member|
                             matched_user = User.find(member.user_id)
-                            Pusher.trigger("user_#{matched_user.id}", 'match', channel_members.as_json)
+                            member.destroy
+                            Pusher.trigger("user_#{matched_user.id}", 'match', {category: category, team: channel_members}.as_json)
                         end
                     end
                 end
@@ -177,7 +180,7 @@ class PlayersController < ApplicationController
                 if (player.age - other_player.age).abs > 3
                     next
                 end
-                if (player.game_data[:mmr] - other_player.game_data[:mmr]).abs > 250
+                if (player.game_data[:mmr] - other_player.game_data[:mmr]).abs > 300
                     next
                 end
                 duo.push(other_player)
@@ -190,7 +193,8 @@ class PlayersController < ApplicationController
                 end
                 duo.each do |member|
                     matched_user = User.find(member.user_id)
-                    Pusher.trigger("user_#{matched_user.id}", 'match', channel_members.as_json)
+                    member.destroy
+                    Pusher.trigger("user_#{matched_user.id}", 'match', {category: category, team: channel_members}.as_json)
                 end
             end
         end
@@ -208,43 +212,31 @@ class PlayersController < ApplicationController
     
     # 최근 업데이트 되지 않은 플레이어들은 다 삭제해 주기
     def filter_players
-        Player.where(updated_at: 30.seconds.ago..Time.now).destroy_all
+        Player.where(updated_at: 10.seconds.ago..Time.now).destroy_all
     end
     
     # 플레이어들을 채팅방에 연결해줌
     def link_players
         room_name =  params[:team].join('_')
-        player = Player.find_by_user_id(current_user.id)
+        category = params[:category]
         # 플레이어들 넣어줄 채팅방 만들기
         puts "--------room_name----------"
         puts room_name
         if ChatRoom.where(title: room_name).empty?
-            chat_room = ChatRoom.create(title: room_name, category_id: player.category_id)
-            puts Admission.create(user_id: current_user.id, chat_room_id: chat_room.id)
-            # sleep 2.2
-            # Pusher.trigger("user_#{current_user.id}", 'link', {:id => @chat_room.id}.as_json )
-            puts "----------------------Create Room--------------------------"
-            # Pusher.trigger("chat_room_#{@chat_room.id}", 'reload', {})
+            puts "@@@ Master has created a room ###"
+            chat_room = ChatRoom.create(title: room_name, category_id: category)
+            Admission.create(user_id: current_user.id, chat_room_id: chat_room.id)
         else
             chat_room = ChatRoom.find_by! title: room_name
             # 플레이어 어드미션 만들어주기
-            puts Admission.create(user_id: current_user.id, chat_room_id: chat_room.id)
-            # sleep 2.2
-            # 여기다가 두 유저의 데이터를 보내는 건 어떤지?
-            # 채팅방으로 리다이렉트 해주기
-            # Pusher.trigger("user_#{current_user.id}", 'link', {:id => chat_room.id}.as_json )
-            puts "----------------------Join Room--------------------------"
+            Admission.create(user_id: current_user.id, chat_room_id: chat_room.id)
+            puts "@@@ Member has entered the room ###"
         end
         if chat_room.admissions.length == params[:team].size
             chat_room.admissions.each do |admission|
                 Pusher.trigger("user_#{admission.user_id}", 'link', {:id => chat_room.id}.as_json )
             end
         end
-        puts "---------link-----"
-        puts params[:team].size
-        puts "----------------"
-        # 플레이어 정보 삭제
-        player.destroy
     end
     
     # # 2인 큐를 잡아주는 알고리즘
