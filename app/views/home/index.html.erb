@@ -30,10 +30,10 @@
     		    <div class="d-flex h-25 align-items-end justify-content-end">
     		      &nbsp&nbsp
     		      
-    		      <button onclick="isloading.start()" class="btn btn-pink waves-effect w-md waves-light m-b-5  <%= @firstgmae.category.game_name%>_duo"
+    		      <button onclick="isloading.start()" class="btn btn-pink waves-effect w-md waves-light m-b-5 queduo  <%= @firstgmae.category.game_name%>_duo"
     		        data-category="<%=@firstgmae.category.id%>">Duo</button>
     		        <hr>
-    		      <button onclick="isloading.start()" class="btn btn-pink waves-effect w-md waves-light m-b-5 <%= @firstgmae.category.game_name%>_squad"
+    		      <button onclick="isloading.start()" class="btn btn-pink waves-effect w-md waves-light m-b-5 quesquad <%= @firstgmae.category.game_name%>_squad"
     		        data-category="<%=@firstgmae.category.id%>">Squad</button>
     		    </div>
     		   <% else %>
@@ -64,8 +64,9 @@ $('#carouselExampleIndicators').on('slid.bs.carousel', function () {
   console.log(gamename);
   $('.game-title').text(gamename);
 //   $('.game-href').attr('data-gamename',`${game}`)
-  $('.queduo').attr('class',`btn btn-dark queduo  ${game}_duo`);
+  $('.queduo').attr('class',`btn btn-pink waves-effect w-md waves-light m-b-5 queduo  ${game}_duo`);
   $('.queduo').attr('data-category',`${category}`);
+  $('.quesquad').attr('class',`btn btn-pink waves-effect w-md waves-light m-b-5 quesquad  ${game}_squad`);
   $('.quesquad').attr('data-category',`${category}`);
   
   
@@ -74,13 +75,13 @@ $('#carouselExampleIndicators').on('slid.bs.carousel', function () {
 $(document).on('ready', function() {
    
     // Check online status of a player and updates the connection time
-    setInterval(function () {
-        console.log("Updating player time");
-        $.ajax({
-            url: "/players/update",
-            method: "PATCH",
-        });
-    }, 5000);
+    // setInterval(function () {
+    //     console.log("Updating player time");
+    //     $.ajax({
+    //         url: "/players/update",
+    //         method: "PATCH",
+    //     });
+    // }, 5000);
     
     var pusher = new Pusher('<%= ENV["PUSHER_KEY"]%>', {
         cluster: "<%= ENV["PUSHER_CLUSTER"]%>",
@@ -97,9 +98,9 @@ $(document).on('ready', function() {
     channel.bind('match', function(data) {
         console.log(data);
         if (confirm("찾았습니다! 수락하시겠습니까?")) {
-            console.log(data.join(''));
+            console.log(data.join('_'));
             
-            var accept_channel = pusher.subscribe('presence-' + data.join(''));
+            var accept_channel = pusher.subscribe('presence-' + data.join('_'));
             
             accept_channel.bind('pusher:member_added', function(member) {
                 console.log("Accept count at " + accept_channel.members.count);
@@ -197,7 +198,7 @@ $(document).on('click', '.ow_duo', function() {
     });
 });
 
-$(document).on('click', '.btn-dark', function() {
+$(document).on('click', '.btn-pink', function() {
     setTimeout(function() {
         alert("현재 비슷한 플레이어를 찾을 수 없습니다")
         isloading.stop();

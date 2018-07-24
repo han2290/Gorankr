@@ -127,10 +127,10 @@ class MypagesController < ApplicationController
             user_lol_league = JSON.parse(user_lol_league)
             tier = user_lol_league[0]["tier"]
             
-            return game_date = {"티어": tier, "주 포지션 1": pos1}
+            return game_date = {"티어" => tier, "주 포지션 1" => pos1}
         
         rescue
-           return game_date ={"": ""}
+           return game_date ={"" => ""}
         end
         
         
@@ -154,9 +154,9 @@ class MypagesController < ApplicationController
             puts duoMMR
             puts squadMMR
             
-            return game_data = {"Solo MMR": soloMMR, "Duo MMR": duoMMR, "Squad MMR": squadMMR}   
+            return game_data = {"Solo MMR" => soloMMR, "Duo MMR" => duoMMR, "Squad MMR"=> squadMMR}   
         rescue
-            return game_data = {"": ""}
+            return game_data = {"" => ""}
         end
     end
     
@@ -180,10 +180,11 @@ class MypagesController < ApplicationController
             url = URI.encode("https://www.overbuff.com/players/pc/" + ow_id + "?mode=competitive")
             page = Nokogiri::HTML(open(url))
             pos = page.xpath("/html/body/div[1]/div[3]/div/div[3]/div[2]/div[2]/div/section/article/table/tbody/tr[1]/td[1]/a/img").attr("alt").text
-            
-            return game_data = {"MMR": mmr, "주 포지션": pos}
+            puts "owdata-------------"
+            puts pos
+            return game_data = {"MMR" => mmr, "주 포지션" => pos}
         rescue
-            return game_data = {"": ""}
+            return game_data = {"" => ""}
         end
     end
         

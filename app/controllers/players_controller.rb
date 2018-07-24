@@ -120,7 +120,7 @@ class PlayersController < ApplicationController
                     if team.length == 5
                         channel_members = Array.new
                         team.each do |member|
-                            channel_members.push(member.user.username)
+                            channel_members.push(member.user.id)
                         end
                         team.each do |member|
                             matched_user = User.find(member.user_id)
@@ -140,7 +140,7 @@ class PlayersController < ApplicationController
                     if team.length == 4
                         channel_members = Array.new
                         team.each do |member|
-                            channel_members.push(member.user.username)
+                            channel_members.push(member.user.id)
                         end
                         team.each do |member|
                             matched_user = User.find(member.user_id)
@@ -161,7 +161,7 @@ class PlayersController < ApplicationController
                     if team.length == 4
                         channel_members = Array.new
                         team.each do |member|
-                            channel_members.push(member.user.username)
+                            channel_members.push(member.user.id)
                         end
                         team.each do |member|
                             matched_user = User.find(member.user_id)
@@ -186,7 +186,7 @@ class PlayersController < ApplicationController
             if duo.length == 2
                 channel_members = Array.new
                 duo.each do |member|
-                    channel_members.push(member.user.username)
+                    channel_members.push(member.user.id)
                 end
                 duo.each do |member|
                     matched_user = User.find(member.user_id)
@@ -213,38 +213,36 @@ class PlayersController < ApplicationController
     
     # 플레이어들을 채팅방에 연결해줌
     def link_players
-        room_name =  params[:team].join('')
+        room_name =  params[:team].join('_')
         player = Player.find_by_user_id(current_user.id)
         # 플레이어들 넣어줄 채팅방 만들기
+        puts "--------room_name----------"
+        puts room_name
         if ChatRoom.where(title: room_name).empty?
-            @chat_room = ChatRoom.new(title: room_name)
-            @chat_room.category_id = player.category_id
-            @chat_room.save
-            Admission.create(user_id: current_user.id, chat_room_id: @chat_room.id)
+            chat_room = ChatRoom.create(title: room_name, category_id: player.category_id)
+            puts Admission.create(user_id: current_user.id, chat_room_id: chat_room.id)
             # sleep 2.2
             # Pusher.trigger("user_#{current_user.id}", 'link', {:id => @chat_room.id}.as_json )
-            
-            
-            
             puts "----------------------Create Room--------------------------"
             # Pusher.trigger("chat_room_#{@chat_room.id}", 'reload', {})
         else
             chat_room = ChatRoom.find_by! title: room_name
             # 플레이어 어드미션 만들어주기
-            Admission.create(user_id: current_user.id, chat_room_id: chat_room.id)
+            puts Admission.create(user_id: current_user.id, chat_room_id: chat_room.id)
             # sleep 2.2
             # 여기다가 두 유저의 데이터를 보내는 건 어떤지?
             # 채팅방으로 리다이렉트 해주기
-            
-            chat_room.admissions.each do |admission|
-                Pusher.trigger("user_#{admission.user_id}", 'link', {:id => chat_room.id}.as_json )
-            end
-            
-            
-            
             # Pusher.trigger("user_#{current_user.id}", 'link', {:id => chat_room.id}.as_json )
             puts "----------------------Join Room--------------------------"
         end
+        if chat_room.admissions.length == params[:team].size
+            chat_room.admissions.each do |admission|
+                Pusher.trigger("user_#{admission.user_id}", 'link', {:id => chat_room.id}.as_json )
+            end
+        end
+        puts "---------link-----"
+        puts params[:team].size
+        puts "----------------"
         # 플레이어 정보 삭제
         player.destroy
     end
